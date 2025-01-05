@@ -10,7 +10,7 @@ app.get('/ping', async (req, res) => {
   res.send('Pong from Server 1');
   setTimeout(() => {
     callback();
-  }, 5000);
+  }, 300000);
 });
 
 
