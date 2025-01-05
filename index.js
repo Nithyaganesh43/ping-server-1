@@ -15,7 +15,7 @@ app.get('/ping', async (req, res) => {
 
 
 (async () => {
-   await fetch('http://localhost:3001/ping')
+   await fetch('https://ping-server-1.onrender.com/ping')
      .then((res) => {
        if (res.ok) {
          console.log('Server 2 is responding:', res.status);
@@ -29,7 +29,7 @@ app.get('/ping', async (req, res) => {
 })()
 
   function callback() {
- fetch('http://localhost:3001/ping')
+ fetch('https://ping-server-1.onrender.com/ping')
     .then((res) => {
       if (res.ok) {
         console.log('Server 2 is responding:', res.status);
