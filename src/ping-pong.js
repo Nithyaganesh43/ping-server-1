@@ -1,17 +1,24 @@
 
 const ping_pong = require('express').Router();
 const fetch = require('node-fetch'); 
-
-
+ let pingCycle=false;
 ping_pong.get('/ping', async (req, res) => {
+  if(!pingCycle){
+  pingCycle = true;
+  if (pingCycle) {
+    setTimeout(() => {
+      callback();
+    }, 300000);
+  }
+  
+  }
   console.log('Pong Pong Server 1');
   res.send('Pong from Server 1');
-  setTimeout(() => {
-    callback();
-  }, 300000);
+ 
 });
 
 (async () => {
+  pingCycle=false;
   await fetch('https://ping-server-2.onrender.com/ping')
     .then((res) => {
       if (res.ok) {
@@ -25,7 +32,8 @@ ping_pong.get('/ping', async (req, res) => {
     });
 })();
 
-function callback() {
+function callback() { 
+  pingCycle=false;
   fetch('https://ping-server-2.onrender.com/ping')
     .then((res) => {
       if (res.ok) {

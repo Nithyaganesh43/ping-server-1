@@ -3,15 +3,26 @@ const fetch = require('node-fetch');
 const fs = require('fs');
 const path = require('path');
 const DATA_FILE = path.join(__dirname, 'stockData.json');
+// // Normal usage (real date and time)
+// const realDate = getCurrentDateObj();
+// console.log(realDate);
 
-const getCurrentIST = () => {
-  const date = new Date().toLocaleString('en-GB', {
-    timeZone: 'Asia/Kolkata',
-    hour12: false,
-  });
+// // Simulated usage (for testing)
+ 
+ 
+const getCurrentDateObj = (simulatedDate = null) => {
+  const date = 
+    simulatedDate ||
+    new Date().toLocaleString('en-GB', {
+      timeZone: 'Asia/Kolkata',
+      hour12: false,
+    });
+    //  //replace with '03/01/2025, 16:31:10';
   const [datePart, timePart] = date.split(', ');
   return { date: datePart.replace(/\//g, '-'), time: timePart };
 };
+
+console.log(getCurrentDateObj());
 
 const validateTime = () => {
   const holydays = [
@@ -30,18 +41,20 @@ const validateTime = () => {
     '2025-11-05',
     '2025-12-25',
   ];
-  const date = new Date();
-  const currentDate = date.toISOString().split('T')[0];
-  const day = date.getDay();
-  const timeInMinutes = date.getHours() * 60 + date.getMinutes();
+  const { date, time } = getCurrentDateObj();
+  const currentDate = date;
+  const day = new Date(
+    `${date.split('-').reverse().join('-')}T${time}`
+  ).getDay();
+  const timeInMinutes =
+    parseInt(time.split(':')[0]) * 60 + parseInt(time.split(':')[1]);
   return !(
     holydays.includes(currentDate) ||
     [0, 6].includes(day) ||
     timeInMinutes < 570 ||
     timeInMinutes > 915
   );
-};
-
+}; 
 const isTimeDifferenceLessThan15Minutes = (obj1, obj2) => {
   const parseDate = ({ date, time }) =>
     new Date(`${date.split('-').reverse().join('-')}T${time}`);
@@ -96,7 +109,7 @@ const sanitizeData = (inputData) =>
   }));
 
 const getFormattedAndSanitizedData = (data) => ({
-  lastUpdated: getCurrentIST(),
+  lastUpdated: getCurrentDateObj(),
   isMarketOpen: validateTime(),
   data: sanitizeData(data),
 });
@@ -138,7 +151,7 @@ const getStoredMarketDataWithoutValues = () => {
 (async () => saveDataToFile(await fetchStockData()))();
 
 api.get('/MarketHealers/getMarketData', async (req, res) => {
-  const requestTime = getCurrentIST();
+  const requestTime = getCurrentDateObj();
   if (validateTime()) {
     const storedData = getAllStoredMarketData();
     if (
@@ -148,7 +161,7 @@ api.get('/MarketHealers/getMarketData', async (req, res) => {
         requestTime,
         validateTime: true,
         data: storedData,
-        fresh: false,
+        fresh: false, 
       });
     }
     const newStockData = await fetchStockData();

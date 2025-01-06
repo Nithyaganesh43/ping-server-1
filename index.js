@@ -1,8 +1,8 @@
-const express = require('express');
-const cors = require('cors');
-const app = express();
+const app = require('express')();
 const ping_pong = require('./src/ping-pong');
-const api = require('./api');
+const cors = require('cors');
+app.use(ping_pong);
+
 app.use(
   cors({
     origin: '*',
@@ -10,14 +10,16 @@ app.use(
     allowedHeaders: ['Content-Type', 'Authorization'],
   })
 );
-app.use(ping_pong);
+
+const api = require('./src/api');
+
 app.use(api);
 
-app.use('/hi',(req, res) => res.send('Hi from server 1'));
+app.use('/hi', (req, res) => res.send('Hi from server 1'));
 
 app.use((req, res) => res.send('Hello from server 1'));
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, async () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+app.listen(PORT, () => {
+  console.log(`Server running on http://localhost:${PORT} successfully`);
 });
