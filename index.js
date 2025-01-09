@@ -36,7 +36,7 @@ const api = require('./src/api');
 app.use(signup);
 app.use(api);
 
-// app.use((req, res) => res.send('Hello from server 1'));
+app.use((req, res) => res.send('Hello from server '));
 
 connectToDB()
   .then(() => {

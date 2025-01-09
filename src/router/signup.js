@@ -36,7 +36,7 @@ passport.use(
       clientID: GOOGLE_CLIENT_ID,
       clientSecret: GOOGLE_CLIENT_SECRET,
       callbackURL:
-        'http://localhost:3000/markethealers/auth/auth/google/callback',
+        'https://server.markethealers.com/markethealers/auth/auth/google/callback',
     },
     async (accessToken, refreshToken, profile, done) => {
       const userData = {
