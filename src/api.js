@@ -65,8 +65,7 @@ const fetchStockData = async () => {
   const stockSymbols = [
     '^BSESN',
     '^NSEI',
-    'RELIANCE.NS',
-    'RELIANCE.NS',
+    'RELIANCE.NS', 
     'TCS.NS',
     'INFY.NS',
     'HDFCBANK.NS',
