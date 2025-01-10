@@ -67,7 +67,8 @@ const fetchStockData = async () => {
   const results = await Promise.all(
     stockSymbols.map((symbol) =>
       fetch(
-        `https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?interval=1m&range=20m`
+        `https://query1.finance.yahoo.com`
+        // `https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?interval=1m&range=20m`
       )
         .then((res) => res.json())
         .then((data) => (data.chart.result ? data.chart.result[0] : null))
@@ -111,14 +112,17 @@ const saveDataToFile = async (data) => {
     JSON.stringify(getFormattedAndSanitizedData(data))
   );
 };
+ 
 
 const loadDataFromFile = async () => {
-  if (await fs.existsSync(DATA_FILE)) {
-    return JSON.parse(await fs.readFile(DATA_FILE, 'utf8'));
+  try {
+    await fs.access(DATA_FILE); // Check if the file exists asynchronously
+    const data = await fs.readFile(DATA_FILE, 'utf8');
+    return JSON.parse(data);
+  } catch (err) {
+    return null; // Return null if the file doesn't exist or there's any other error
   }
-  return null;
 };
-
 const getAllStoredMarketData = async () => loadDataFromFile();
 
 const getStoredMarketDataWithoutValues = async () => {
@@ -140,7 +144,7 @@ const getStoredMarketDataWithoutValues = async () => {
   };
 };
 
-(async () => await saveDataToFile(await fetchStockData()))();
+// (async () => await saveDataToFile(await fetchStockData()))();
 
 api.get('/MarketHealers/getMarketData', async (req, res) => {
   const requestTime = getCurrentDateObj();
