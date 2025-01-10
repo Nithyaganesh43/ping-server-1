@@ -22,6 +22,7 @@ const corsOptions = {
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
 };
+
 app.use(cors(corsOptions));
 app.options('*', cors(corsOptions));
 
@@ -38,6 +39,10 @@ app.use(signup);
 app.use((req, res) => res.send('Hello from server '));
 
 const connectToDB = require('./src/config/database');
+
+
+
+
 connectToDB()
 .then(() => {
   console.log('Connected to MongoDB');

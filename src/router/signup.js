@@ -7,7 +7,7 @@ const {auth , tempAuth }= require("../middlewares/loginAuth");
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;  
 const FRONT_END_URL = process.env.FRONT_END_URL;
-const validator = require("validator");
+ 
 const mail = require("../helper/mail");
 const validateUserInfromations = require("../helper/validateUserInfromations");
 const jwt = require("jsonwebtoken"); 
@@ -15,18 +15,6 @@ const jwt = require("jsonwebtoken");
 signup.use(passport.initialize()); 
    
    
-
-const bcrypt = require('bcrypt');
-const { isValidObjectId } = require('mongoose');
-
-async function hashPassword(password) {
-    const saltRounds = 10;
-    return await bcrypt.hash(password, saltRounds);
-}
-
-async function comparePassword(password, hashedPassword) {
-    return await bcrypt.compare(password, hashedPassword) ? 1 : 0;
-}  
  
 
 //GoogleStrategy 
@@ -152,7 +140,7 @@ signup.post("/markethealers/auth/auth/markethealers",async (req,res)=>{
     if(!email){
       throw new Error("Email not found"); 
     }
-    if(!validator.isEmail(email))
+    if(!isEmail(email))
     {
       throw new Error("Invalid Email")
     }
@@ -204,8 +192,7 @@ signup.post("/markethealers/auth/signupSuccessful", tempAuth, async (req, res) =
     if(user.fullName && user.passport && user.userName){
       throw new Error("Already registed the informations");
     }
-
-    password = await hashPassword(password);
+ 
     const updatedStatus = await User.findByIdAndUpdate(user._id,{fullName:fullName, userName:userName , password:password});
     if (!updatedStatus) {
       throw new Error("User not found or update failed.");
@@ -240,7 +227,7 @@ signup.post("/markethealers/auth/userLogedIn", async (req, res) => {
     }else{
      
   const user = await User.findOne( {userName:userName} );
-  if(user && await comparePassword(password,user.password)){
+  if(user && password==user.password){
 
     let token = await user.getJWT();
     res.cookie("token",token, { 
@@ -306,7 +293,7 @@ signup.post("/markethealers/auth/forgotPasswordGetOtp",async (req,res)=>{
       if(!email){
         throw new Error("Email not found");
       }
-      if(!validator.isEmail(email))
+      if(!isEmail(email))
       {
         throw new Error("Invalid Email")
       } 
@@ -351,8 +338,7 @@ signup.post("/markethealers/auth/resetPassword",auth, async (req, res) => {
        
   const user = req.user;
  
-  if(user){
-  password =await hashPassword(password);
+  if(user){ 
     const updatedStatus = await User.findByIdAndUpdate(user._id,{ password:password} , {runValidators : true});
     if (!updatedStatus) {
       throw new Error("User not found or update failed.");
@@ -458,6 +444,9 @@ signup.get('/markethealers/auth', auth, (req, res) => {
   res.redirect('/markethealers/auth/home');
 });
 
-
+function isEmail(str) {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(str);
+}
  
 module.exports = signup;

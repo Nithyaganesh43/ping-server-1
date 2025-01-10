@@ -1,6 +1,6 @@
 
 const ping_pong = require('express').Router();
-const fetch = require('node-fetch'); 
+ 
  let pingCycle=false;
 ping_pong.get('/ping', async (req, res) => {
   if(!pingCycle){

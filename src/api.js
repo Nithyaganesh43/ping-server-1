@@ -1,8 +1,8 @@
 const api = require('express').Router();
-const fetch = require('node-fetch');
 const fs = require('fs').promises;
 const path = require('path');
-const DATA_FILE = path.join(__dirname, 'stockData.json');
+const STOCK_DATA_FILE = path.join(__dirname, 'stockData.json');
+const NEWS_DATA_FILE = path.join(__dirname, 'newsData.json');
 
 const getCurrentDateObj = (simulatedDate = null) => {
   const date =
@@ -55,20 +55,18 @@ const isTimeDifferenceLessThan15Minutes = (obj1, obj2) => {
 
 const fetchStockData = async () => {
   const stockSymbols = [
-    '^BSESN',
+     
     '^NSEI',
     'RELIANCE.NS',
     'TCS.NS',
     'INFY.NS',
     'HDFCBANK.NS',
-    'ICICIBANK.NS',
-    'BAJFINANCE.NS',
+    'ICICIBANK.NS', 
   ];
   const results = await Promise.all(
     stockSymbols.map((symbol) =>
       fetch(
-        `https://query1.finance.yahoo.com`
-        // `https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?interval=1m&range=20m`
+        `https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?interval=1m&range=15m`
       )
         .then((res) => res.json())
         .then((data) => (data.chart.result ? data.chart.result[0] : null))
@@ -76,6 +74,30 @@ const fetchStockData = async () => {
     )
   );
   return results.filter(Boolean);
+};
+
+const fetchNewsData = async () => {
+  const results = await Promise.all(
+    ['in'].map(async (country) => {
+      try {
+        const res = await fetch(
+          `https://gnews.io/api/v4/search?q=stock+market+OR+share+market+OR+gold&lang=en&country=${country}&topic=business&max=10&apikey=e7d52e6fffe5f02ba7f33d95e08fa0d6`
+        );
+        const data = await res.json();
+        return data?.articles;
+      } catch (e) {
+        return console.log(e);
+      }
+    })
+  );
+  // console.log(results)
+  return results.filter(Boolean);
+};
+const saveNewsDataToFile = async (data) => {
+  await fs.writeFile(
+    NEWS_DATA_FILE,
+    JSON.stringify({ lastUpdated: getCurrentDateObj(), data: data[0] })
+  );
 };
 
 const sanitizeData = (inputData) =>
@@ -106,27 +128,31 @@ const getFormattedAndSanitizedData = (data) => ({
   data: sanitizeData(data),
 });
 
-const saveDataToFile = async (data) => {
+const saveStockDataToFile = async (data) => {
   await fs.writeFile(
-    DATA_FILE,
+    STOCK_DATA_FILE,
     JSON.stringify(getFormattedAndSanitizedData(data))
   );
 };
- 
 
-const loadDataFromFile = async () => {
+const loadDataFromFile = async (FILE) => {
   try {
-    await fs.access(DATA_FILE); // Check if the file exists asynchronously
-    const data = await fs.readFile(DATA_FILE, 'utf8');
+    await fs.access(FILE);
+    const data = await fs.readFile(FILE, 'utf8');
     return JSON.parse(data);
   } catch (err) {
-    return null; // Return null if the file doesn't exist or there's any other error
+    return null;
   }
 };
-const getAllStoredMarketData = async () => loadDataFromFile();
+const getNewsData = async () => {
+  const data = await loadDataFromFile(NEWS_DATA_FILE);
+  return data;
+};
+
+const getAllStoredMarketData = async () => loadDataFromFile(STOCK_DATA_FILE);
 
 const getStoredMarketDataWithoutValues = async () => {
-  const data = await loadDataFromFile();
+  const data = await loadDataFromFile(STOCK_DATA_FILE);
   if (!data) return null;
   return {
     lastUpdated: data.lastUpdated,
@@ -144,7 +170,34 @@ const getStoredMarketDataWithoutValues = async () => {
   };
 };
 
-// (async () => await saveDataToFile(await fetchStockData()))();
+(async () => {
+  const storedData = await getAllStoredMarketData();
+
+  if (storedData.data.length == 0) {
+    await saveStockDataToFile(await fetchStockData());
+  } else {
+    if (validateTime()) {
+      const storedData = await getAllStoredMarketData();
+      if (
+        isTimeDifferenceLessThan15Minutes(
+          getCurrentDateObj(),
+          storedData.lastUpdated
+        )
+      ) {
+        await saveStockDataToFile(await fetchStockData());
+      }
+    }
+  }
+  const newsData = await getNewsData();
+  if (newsData.data.length == 0) {
+    await saveNewsDataToFile(await fetchNewsData());
+    console.log(getCurrentDateObj().date, newsData.lastUpdated.data);
+  } else {
+    if (getCurrentDateObj().date != newsData.lastUpdated.date) {
+      await saveNewsDataToFile(await fetchNewsData());
+    }
+  }
+})();
 
 api.get('/MarketHealers/getMarketData', async (req, res) => {
   const requestTime = getCurrentDateObj();
@@ -160,8 +213,7 @@ api.get('/MarketHealers/getMarketData', async (req, res) => {
         fresh: false,
       });
     }
-    const newStockData = await fetchStockData();
-    await saveDataToFile(newStockData);
+    await saveStockDataToFile(await fetchStockData());
     return res.json({
       requestTime,
       validateTime: true,
@@ -174,6 +226,18 @@ api.get('/MarketHealers/getMarketData', async (req, res) => {
     validateTime: false,
     data: await getStoredMarketDataWithoutValues(),
     fresh: false,
+  });
+});
+
+api.get('/MarketHealers/getNewstData', async (req, res) => {
+  let newsData = await getNewsData();
+
+  if (getCurrentDateObj().date != newsData.lastUpdated.date) {
+    await saveNewsDataToFile(await fetchNewsData());
+    newsData = await getNewsData();
+  }
+  return res.json({
+    data: newsData,
   });
 });
 
