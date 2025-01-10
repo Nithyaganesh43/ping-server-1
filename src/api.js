@@ -1,28 +1,19 @@
 const api = require('express').Router();
 const fetch = require('node-fetch');
-const fs = require('fs');
+const fs = require('fs').promises;
 const path = require('path');
 const DATA_FILE = path.join(__dirname, 'stockData.json');
-// // Normal usage (real date and time)
-// const realDate = getCurrentDateObj();
-// console.log(realDate);
 
-// // Simulated usage (for testing)
- 
- 
 const getCurrentDateObj = (simulatedDate = null) => {
-  const date = 
+  const date =
     simulatedDate ||
     new Date().toLocaleString('en-GB', {
       timeZone: 'Asia/Kolkata',
       hour12: false,
     });
-    //  //replace with '03/01/2025, 16:31:10';
   const [datePart, timePart] = date.split(', ');
   return { date: datePart.replace(/\//g, '-'), time: timePart };
 };
-
-console.log(getCurrentDateObj());
 
 const validateTime = () => {
   const holydays = [
@@ -54,7 +45,8 @@ const validateTime = () => {
     timeInMinutes < 570 ||
     timeInMinutes > 915
   );
-}; 
+};
+
 const isTimeDifferenceLessThan15Minutes = (obj1, obj2) => {
   const parseDate = ({ date, time }) =>
     new Date(`${date.split('-').reverse().join('-')}T${time}`);
@@ -65,7 +57,7 @@ const fetchStockData = async () => {
   const stockSymbols = [
     '^BSESN',
     '^NSEI',
-    'RELIANCE.NS', 
+    'RELIANCE.NS',
     'TCS.NS',
     'INFY.NS',
     'HDFCBANK.NS',
@@ -113,23 +105,24 @@ const getFormattedAndSanitizedData = (data) => ({
   data: sanitizeData(data),
 });
 
-const saveDataToFile = (data) => {
-  fs.writeFileSync(
+const saveDataToFile = async (data) => {
+  await fs.writeFile(
     DATA_FILE,
     JSON.stringify(getFormattedAndSanitizedData(data))
   );
 };
 
-const loadDataFromFile = () => {
-  if (fs.existsSync(DATA_FILE))
-    return JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'));
+const loadDataFromFile = async () => {
+  if (await fs.existsSync(DATA_FILE)) {
+    return JSON.parse(await fs.readFile(DATA_FILE, 'utf8'));
+  }
   return null;
 };
 
-const getAllStoredMarketData = () => loadDataFromFile();
+const getAllStoredMarketData = async () => loadDataFromFile();
 
-const getStoredMarketDataWithoutValues = () => {
-  const data = loadDataFromFile();
+const getStoredMarketDataWithoutValues = async () => {
+  const data = await loadDataFromFile();
   if (!data) return null;
   return {
     lastUpdated: data.lastUpdated,
@@ -147,12 +140,12 @@ const getStoredMarketDataWithoutValues = () => {
   };
 };
 
-(async () => saveDataToFile(await fetchStockData()))();
+(async () => await saveDataToFile(await fetchStockData()))();
 
 api.get('/MarketHealers/getMarketData', async (req, res) => {
   const requestTime = getCurrentDateObj();
   if (validateTime()) {
-    const storedData = getAllStoredMarketData();
+    const storedData = await getAllStoredMarketData();
     if (
       isTimeDifferenceLessThan15Minutes(requestTime, storedData.lastUpdated)
     ) {
@@ -160,22 +153,22 @@ api.get('/MarketHealers/getMarketData', async (req, res) => {
         requestTime,
         validateTime: true,
         data: storedData,
-        fresh: false, 
+        fresh: false,
       });
     }
     const newStockData = await fetchStockData();
-    saveDataToFile(newStockData);
+    await saveDataToFile(newStockData);
     return res.json({
       requestTime,
       validateTime: true,
-      data: getAllStoredMarketData(),
+      data: await getAllStoredMarketData(),
       fresh: true,
     });
   }
   return res.json({
     requestTime,
     validateTime: false,
-    data: getStoredMarketDataWithoutValues(),
+    data: await getStoredMarketDataWithoutValues(),
     fresh: false,
   });
 });
