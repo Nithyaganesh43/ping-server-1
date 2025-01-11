@@ -55,13 +55,12 @@ const isTimeDifferenceLessThan15Minutes = (obj1, obj2) => {
 
 const fetchStockData = async () => {
   const stockSymbols = [
-     
     '^NSEI',
     'RELIANCE.NS',
     'TCS.NS',
     'INFY.NS',
     'HDFCBANK.NS',
-    'ICICIBANK.NS', 
+    'ICICIBANK.NS',
   ];
   const results = await Promise.all(
     stockSymbols.map((symbol) =>
@@ -78,7 +77,7 @@ const fetchStockData = async () => {
 
 const fetchNewsData = async () => {
   const results = await Promise.all(
-    ['in'].map(async (country) => {
+    ['in', 'us'].map(async (country) => {
       try {
         const res = await fetch(
           `https://gnews.io/api/v4/search?q=stock+market+OR+share+market+OR+gold&lang=en&country=${country}&topic=business&max=10&apikey=e7d52e6fffe5f02ba7f33d95e08fa0d6`
@@ -174,24 +173,23 @@ const getStoredMarketDataWithoutValues = async () => {
   const storedData = await getAllStoredMarketData();
 
   if (!storedData?.data?.length || storedData?.data?.length == 0) {
-     
     await saveStockDataToFile(await fetchStockData());
-  } else { 
-    if (validateTime()) {  
+  } else {
+    if (validateTime()) {
       const storedData = await getAllStoredMarketData();
       if (
         isTimeDifferenceLessThan15Minutes(
           getCurrentDateObj(),
           storedData.lastUpdated
         )
-      ) {  
+      ) {
         await saveStockDataToFile(await fetchStockData());
       }
     }
   }
   const newsData = await getNewsData();
-  if (!newsData?.data?.length || newsData?.data?.length  == 0) {
-    await saveNewsDataToFile(await fetchNewsData()); 
+  if (!newsData?.data?.length || newsData?.data?.length == 0) {
+    await saveNewsDataToFile(await fetchNewsData());
   } else {
     if (getCurrentDateObj().date != newsData?.lastUpdated?.date) {
       await saveNewsDataToFile(await fetchNewsData());
