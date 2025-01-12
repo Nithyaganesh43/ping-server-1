@@ -13,14 +13,21 @@ const signup = require('./src/router/signup');
 const app = express();
 
 app.use(helmet());
+ 
+
 app.use(
   cors({
-    origin: process.env.FRONT_END_URL,
+    origin: [
+      process.env.FRONT_END_URL,
+      'http://localhost:3000',
+      'http://localhost:1234',
+    ],
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
   })
 );
+
 app.use(
   rateLimit({
     windowMs: 15 * 60 * 1000,
@@ -43,17 +50,8 @@ app.use(ping_pong);
 //   } else {
 //     next();
 //   }
-// });
-app.use((req, res, next) => {
-  if (req.ip !== '192.168.129.43') {
-    res
-      .status(403)
-      .send('Why the hell are you even touching my server? Get lost');
-  } else {
-    next();
-  }
-});
-
+// }); 
+ 
 app.use(api);
 app.use(signup);
  

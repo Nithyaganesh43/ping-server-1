@@ -54,7 +54,7 @@ const isTimeDifferenceLessThan15Minutes = (obj1, obj2) => {
 };
 
 const fetchStockData = async () => {
- 
+   console.log('fetched values');
   const stockSymbols = [
     '^NSEI',
     'RELIANCE.NS',
@@ -78,7 +78,7 @@ const fetchStockData = async () => {
 };
 
 const fetchNewsData = async () => {
-  
+  console.log("fetched news")
   const results = await Promise.all(
     ['in', 'us'].map(async (country) => {
       try {
@@ -205,7 +205,7 @@ api.get('/MarketHealers/getMarketData', async (req, res) => {
   const requestTime = getCurrentDateObj();
   const storedData = await getAllStoredMarketData();
 
-  if (validateTime() || true) {
+  if (validateTime()) {
     if (
       storedData &&
       requestTime &&
