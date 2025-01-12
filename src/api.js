@@ -54,6 +54,7 @@ const isTimeDifferenceLessThan15Minutes = (obj1, obj2) => {
 };
 
 const fetchStockData = async () => {
+ 
   const stockSymbols = [
     '^NSEI',
     'RELIANCE.NS',
@@ -72,10 +73,12 @@ const fetchStockData = async () => {
         .catch(() => null)
     )
   );
+
   return results.filter(Boolean);
 };
 
 const fetchNewsData = async () => {
+  
   const results = await Promise.all(
     ['in', 'us'].map(async (country) => {
       try {
@@ -89,7 +92,7 @@ const fetchNewsData = async () => {
       }
     })
   );
-  // console.log(results)
+  
   return results.filter(Boolean);
 };
 const saveNewsDataToFile = async (data) => {
@@ -197,12 +200,17 @@ const getStoredMarketDataWithoutValues = async () => {
   }
 })();
 
+let firstStockRequest = false;
 api.get('/MarketHealers/getMarketData', async (req, res) => {
   const requestTime = getCurrentDateObj();
-  if (validateTime()) {
-    const storedData = await getAllStoredMarketData();
+  const storedData = await getAllStoredMarketData();
+
+  if (validateTime() || true) {
     if (
-      isTimeDifferenceLessThan15Minutes(requestTime, storedData.lastUpdated)
+      storedData &&
+      requestTime &&
+      storedData.data.length != 0 &&
+      isTimeDifferenceLessThan15Minutes(requestTime, storedData?.lastUpdated)
     ) {
       return res.json({
         requestTime,
@@ -211,7 +219,27 @@ api.get('/MarketHealers/getMarketData', async (req, res) => {
         fresh: false,
       });
     }
-    await saveStockDataToFile(await fetchStockData());
+
+    if (!firstStockRequest) {
+      firstStockRequest = true;
+      await saveStockDataToFile(await fetchStockData());
+      firstStockRequest = false;
+    } else {
+      function waitForCondition() {
+        return new Promise((resolve) => {
+          const check = () => {
+            if (!firstStockRequest) {
+              resolve();
+            } else {
+              setTimeout(check, 500);
+            }
+          };
+          check();
+        });
+      }
+      await waitForCondition();
+    }
+
     return res.json({
       requestTime,
       validateTime: true,
@@ -219,6 +247,7 @@ api.get('/MarketHealers/getMarketData', async (req, res) => {
       fresh: true,
     });
   }
+
   return res.json({
     requestTime,
     validateTime: false,
@@ -227,13 +256,34 @@ api.get('/MarketHealers/getMarketData', async (req, res) => {
   });
 });
 
+let firstNewsRequest = false;
 api.get('/MarketHealers/getNewsData', async (req, res) => {
   let newsData = await getNewsData();
 
-  if (getCurrentDateObj().date != newsData?.lastUpdated?.date) {
+  if (
+    getCurrentDateObj().date != newsData?.lastUpdated?.date &&
+    firstNewsRequest == false
+  ) {
+    firstNewsRequest = true;
     await saveNewsDataToFile(await fetchNewsData());
     newsData = await getNewsData();
+    firstNewsRequest = false;
+  } else {
+    function waitForCondition() {
+      return new Promise((resolve) => {
+        const check = () => {
+          if (!firstNewsRequest) {
+            resolve();
+          } else {
+            setTimeout(check, 100);
+          }
+        };
+        check();
+      });
+    }
+    await waitForCondition();
   }
+
   return res.json({
     data: newsData,
   });
