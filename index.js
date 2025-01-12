@@ -33,9 +33,22 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(ping_pong);
 
+
+// restrect all other then my fe
+// app.use((req, res, next) => {
+//   if (req.headers.origin !== process.env.FRONT_END_URL) {
+//     res
+//       .status(403)
+//       .send('Why the hell are you even touching my server? Get lost ');
+//   } else {
+//     next();
+//   }
+// });
 app.use((req, res, next) => {
-  if (req.headers.origin !== process.env.FRONT_END_URL) {
-    res.status(403).send('Access denied');
+  if (req.ip !== '192.168.129.43') {
+    res
+      .status(403)
+      .send('Why the hell are you even touching my server? Get lost');
   } else {
     next();
   }
