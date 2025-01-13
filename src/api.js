@@ -54,7 +54,7 @@ const isTimeDifferenceLessThan15Minutes = (obj1, obj2) => {
 };
 
 const fetchStockData = async () => {
-   console.log('fetched values');
+  console.log('fetched values');
   const stockSymbols = [
     '^NSEI',
     'RELIANCE.NS',
@@ -76,29 +76,56 @@ const fetchStockData = async () => {
 
   return results.filter(Boolean);
 };
-
 const fetchNewsData = async () => {
-  console.log("fetched news")
+  console.log('fetched news');
+  const urls = [
+    'https://gnews.io/api/v4/search?q=stock+market&lang=en&country=in,us&topic=business&max=10&apikey=b75a36291e6cfbe5de91e3228688c9ea',
+    'https://gnews.io/api/v4/search?q=share+market&lang=en&country=in,us&topic=business&max=10&apikey=b75a36291e6cfbe5de91e3228688c9ea',
+    'https://gnews.io/api/v4/search?q=gold&lang=en&country=in,us&topic=business&max=10&apikey=b75a36291e6cfbe5de91e3228688c9ea',
+    'https://gnews.io/api/v4/search?q=stock+market&lang=en&country=us&topic=business&max=10&apikey=b75a36291e6cfbe5de91e3228688c9ea',
+    'https://gnews.io/api/v4/search?q=share+market&lang=en&country=us&topic=business&max=10&apikey=b75a36291e6cfbe5de91e3228688c9ea',
+    'https://gnews.io/api/v4/search?q=gold&lang=en&country=us&topic=business&max=10&apikey=b75a36291e6cfbe5de91e3228688c9ea',
+  ];
+
   const results = await Promise.all(
-    ['in', 'us'].map(async (country) => {
+    urls.map(async (url, index) => {
       try {
-        const res = await fetch(
-          `https://gnews.io/api/v4/search?q=stock+market+OR+share+market+OR+gold&lang=en&country=${country}&topic=business&max=10&apikey=e7d52e6fffe5f02ba7f33d95e08fa0d6`
-        );
+        const res = await fetch(url);
         const data = await res.json();
-        return data?.articles;
+        const topics = ['stock market', 'share market', 'gold'];
+        const countries = ['in', 'us'];
+        const topic = topics[Math.floor(index / 2)];
+        const country = countries[index % 2];
+
+        if (data?.articles && data.articles.length > 0) {
+          return {
+            topic: `${country} ${topic} news data`,
+            data: data.articles,
+          };
+        } else {
+          console.log(`No articles found for ${country} ${topic}`);
+          return { topic: `${country} ${topic} news data`, data: [] };
+        }
       } catch (e) {
-        return console.log(e);
+        console.log(`Error fetching data for URL at index ${index}:`, e);
+        const topics = ['stock market', 'share market', 'gold'];
+        const countries = ['in', 'us'];
+        const topic = topics[Math.floor(index / 2)];
+        const country = countries[index % 2];
+        return { topic: `${country} ${topic} news data`, data: [] };
       }
     })
   );
-  
+
   return results.filter(Boolean);
 };
+
+ 
+
 const saveNewsDataToFile = async (data) => {
   await fs.writeFile(
     NEWS_DATA_FILE,
-    JSON.stringify({ lastUpdated: getCurrentDateObj(), data: data[0] })
+    JSON.stringify({ lastUpdated: getCurrentDateObj(), data:data })
   );
 };
 
@@ -190,9 +217,9 @@ const getStoredMarketDataWithoutValues = async () => {
       }
     }
   }
-  const newsData = await getNewsData();
-  if (!newsData?.data?.length || newsData?.data?.length == 0) {
-    await saveNewsDataToFile(await fetchNewsData());
+  const newsData = await getNewsData(); 
+  if (!newsData?.data[0]?.data  || newsData?.data[0]?.data.length == 0) {
+    await saveNewsDataToFile(await fetchNewsData());  
   } else {
     if (getCurrentDateObj().date != newsData?.lastUpdated?.date) {
       await saveNewsDataToFile(await fetchNewsData());
