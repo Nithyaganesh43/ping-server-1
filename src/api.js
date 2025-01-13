@@ -76,56 +76,61 @@ const fetchStockData = async () => {
 
   return results.filter(Boolean);
 };
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
 const fetchNewsData = async () => {
-  console.log('fetched news');
+  console.log('Fetching news...');
   const urls = [
-    'https://gnews.io/api/v4/search?q=stock+market&lang=en&country=in,us&topic=business&max=10&apikey=b75a36291e6cfbe5de91e3228688c9ea',
-    'https://gnews.io/api/v4/search?q=share+market&lang=en&country=in,us&topic=business&max=10&apikey=b75a36291e6cfbe5de91e3228688c9ea',
-    'https://gnews.io/api/v4/search?q=gold&lang=en&country=in,us&topic=business&max=10&apikey=b75a36291e6cfbe5de91e3228688c9ea',
+    'https://gnews.io/api/v4/search?q=stock+market&lang=en&country=in&topic=business&max=10&apikey=b75a36291e6cfbe5de91e3228688c9ea',
+    'https://gnews.io/api/v4/search?q=share+market&lang=en&country=in&topic=business&max=10&apikey=b75a36291e6cfbe5de91e3228688c9ea',
+    'https://gnews.io/api/v4/search?q=gold&lang=en&country=in&topic=business&max=10&apikey=b75a36291e6cfbe5de91e3228688c9ea',
     'https://gnews.io/api/v4/search?q=stock+market&lang=en&country=us&topic=business&max=10&apikey=b75a36291e6cfbe5de91e3228688c9ea',
     'https://gnews.io/api/v4/search?q=share+market&lang=en&country=us&topic=business&max=10&apikey=b75a36291e6cfbe5de91e3228688c9ea',
     'https://gnews.io/api/v4/search?q=gold&lang=en&country=us&topic=business&max=10&apikey=b75a36291e6cfbe5de91e3228688c9ea',
   ];
 
-  const results = await Promise.all(
-    urls.map(async (url, index) => {
-      try {
-        const res = await fetch(url);
-        const data = await res.json();
-        const topics = ['stock market', 'share market', 'gold'];
-        const countries = ['in', 'us'];
-        const topic = topics[Math.floor(index / 2)];
-        const country = countries[index % 2];
+  const topics = ['stock market', 'share market', 'gold'];
+  const countries = ['in', 'us'];
 
-        if (data?.articles && data.articles.length > 0) {
-          return {
-            topic: `${country} ${topic} news data`,
-            data: data.articles,
-          };
-        } else {
-          console.log(`No articles found for ${country} ${topic}`);
-          return { topic: `${country} ${topic} news data`, data: [] };
-        }
-      } catch (e) {
-        console.log(`Error fetching data for URL at index ${index}:`, e);
-        const topics = ['stock market', 'share market', 'gold'];
-        const countries = ['in', 'us'];
-        const topic = topics[Math.floor(index / 2)];
-        const country = countries[index % 2];
-        return { topic: `${country} ${topic} news data`, data: [] };
+  const results = [];
+
+  for (let index = 0; index < urls.length; index++) {
+    const url = urls[index];
+    const topic = topics[Math.floor(index / 2)];
+    const country = countries[index % 2];
+
+    try {
+      const res = await fetch(url);
+      const data = await res.json();
+
+      console.log(`Response for ${country} ${topic}:`, data);
+
+      if (data?.articles?.length > 0) {
+        results.push({
+          topic: `${country} ${topic} news data`,
+          data: data.articles,
+        });
+      } else {
+        console.warn(`No articles found for ${country} ${topic}`);
+        results.push({ topic: `${country} ${topic} news data`, data: [] });
       }
-    })
-  );
+    } catch (error) {
+      console.error(`Error fetching ${country} ${topic} news:`, error);
+      results.push({ topic: `${country} ${topic} news data`, data: [] });
+    }
 
-  return results.filter(Boolean);
+    if (index < urls.length - 1) {
+      await sleep(5000);
+    }
+  }
+
+  return results;
 };
-
- 
 
 const saveNewsDataToFile = async (data) => {
   await fs.writeFile(
     NEWS_DATA_FILE,
-    JSON.stringify({ lastUpdated: getCurrentDateObj(), data:data })
+    JSON.stringify({ lastUpdated: getCurrentDateObj(), data: data })
   );
 };
 
@@ -208,7 +213,7 @@ const getStoredMarketDataWithoutValues = async () => {
     if (validateTime()) {
       const storedData = await getAllStoredMarketData();
       if (
-        isTimeDifferenceLessThan15Minutes(
+        !isTimeDifferenceLessThan15Minutes(
           getCurrentDateObj(),
           storedData.lastUpdated
         )
@@ -217,9 +222,9 @@ const getStoredMarketDataWithoutValues = async () => {
       }
     }
   }
-  const newsData = await getNewsData(); 
-  if (!newsData?.data[0]?.data  || newsData?.data[0]?.data.length == 0) {
-    await saveNewsDataToFile(await fetchNewsData());  
+  const newsData = await getNewsData();
+  if (!newsData?.data[0]?.data || newsData?.data[0]?.data.length == 0) {
+    await saveNewsDataToFile(await fetchNewsData());
   } else {
     if (getCurrentDateObj().date != newsData?.lastUpdated?.date) {
       await saveNewsDataToFile(await fetchNewsData());
@@ -317,3 +322,4 @@ api.get('/MarketHealers/getNewsData', async (req, res) => {
 });
 
 module.exports = api;
+ 
