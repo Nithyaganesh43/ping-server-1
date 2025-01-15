@@ -19,6 +19,7 @@ app.use(
   cors({
     origin: [
       process.env.FRONT_END_URL,
+      'https://market-healers-main-front-end.vercel.app',
       'http://localhost:3000',
       'http://localhost:1234',
     ],
