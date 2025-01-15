@@ -102,20 +102,17 @@ const fetchNewsData = async () => {
     try {
       const res = await fetch(url);
       const data = await res.json();
-
-      console.log(`Response for ${country} ${topic}:`, data);
+ 
 
       if (data?.articles?.length > 0) {
         results.push({
           topic: `${country} ${topic} news data`,
           data: data.articles,
         });
-      } else {
-        console.warn(`No articles found for ${country} ${topic}`);
+      } else { 
         results.push({ topic: `${country} ${topic} news data`, data: [] });
       }
-    } catch (error) {
-      console.error(`Error fetching ${country} ${topic} news:`, error);
+    } catch (error) { 
       results.push({ topic: `${country} ${topic} news data`, data: [] });
     }
 
@@ -182,62 +179,21 @@ const getNewsData = async () => {
   const data = await loadDataFromFile(NEWS_DATA_FILE);
   return data;
 };
-
-const getAllStoredMarketData = async () => loadDataFromFile(STOCK_DATA_FILE);
-
-const getStoredMarketDataWithoutValues = async () => {
-  const data = await loadDataFromFile(STOCK_DATA_FILE);
-  if (!data) return null;
-  return {
-    lastUpdated: data.lastUpdated,
-    isMarketOpen: data.isMarketOpen,
-    data: data.data.map(({ meta, values }) => ({
-      meta,
-      values: {
-        timestamp: [values.timestamp.at(-1)],
-        high: [values.high.at(-1)],
-        low: [values.low.at(-1)],
-        open: [values.open.at(-1)],
-        close: [values.close.at(-1)],
-      },
-    })),
-  };
-};
-
+ 
+ 
 (async () => {
-  const storedData = await getAllStoredMarketData();
 
-  if (!storedData?.data?.length || storedData?.data?.length == 0) {
-    await saveStockDataToFile(await fetchStockData());
-  } else {
-    if (validateTime()) {
-      const storedData = await getAllStoredMarketData();
-      if (
-        !isTimeDifferenceLessThan15Minutes(
-          getCurrentDateObj(),
-          storedData.lastUpdated
-        )
-      ) {
-        await saveStockDataToFile(await fetchStockData());
-      }
-    }
-  }
-  const newsData = await getNewsData();
-  if (!newsData?.data[0]?.data || newsData?.data[0]?.data.length == 0) {
-    await saveNewsDataToFile(await fetchNewsData());
-  } else {
-    if (getCurrentDateObj().date != newsData?.lastUpdated?.date) {
-      await saveNewsDataToFile(await fetchNewsData());
-    }
-  }
+  await saveStockDataToFile(await fetchStockData()); 
+ 
+  await saveNewsDataToFile(await fetchNewsData());
+ 
 })();
 
 let firstStockRequest = false;
 api.get('/MarketHealers/getMarketData', async (req, res) => {
   const requestTime = getCurrentDateObj();
-  const storedData = await getAllStoredMarketData();
-
-  if (validateTime()) {
+  const storedData = await loadDataFromFile(STOCK_DATA_FILE);
+ 
     if (
       storedData &&
       requestTime &&
@@ -245,8 +201,7 @@ api.get('/MarketHealers/getMarketData', async (req, res) => {
       isTimeDifferenceLessThan15Minutes(requestTime, storedData?.lastUpdated)
     ) {
       return res.json({
-        requestTime,
-        validateTime: true,
+        requestTime, 
         data: storedData,
         fresh: false,
       });
@@ -273,19 +228,11 @@ api.get('/MarketHealers/getMarketData', async (req, res) => {
     }
 
     return res.json({
-      requestTime,
-      validateTime: true,
-      data: await getAllStoredMarketData(),
+      requestTime, 
+      data: await loadDataFromFile(STOCK_DATA_FILE),
       fresh: true,
     });
-  }
-
-  return res.json({
-    requestTime,
-    validateTime: false,
-    data: await getStoredMarketDataWithoutValues(),
-    fresh: false,
-  });
+ 
 });
 
 let firstNewsRequest = false;
