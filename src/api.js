@@ -194,11 +194,11 @@ const getStoredMarketDataWithoutValues = async () => {
     data: data.data.map(({ meta, values }) => ({
       meta,
       values: {
-        timestamp: values.timestamp.at(-1),
-        high: values.high.at(-1),
-        low: values.low.at(-1),
-        open: values.open.at(-1),
-        close: values.close.at(-1),
+        timestamp: [values.timestamp.at(-1)],
+        high: [values.high.at(-1)],
+        low: [values.low.at(-1)],
+        open: [values.open.at(-1)],
+        close: [values.close.at(-1)],
       },
     })),
   };
@@ -322,4 +322,3 @@ api.get('/MarketHealers/getNewsData', async (req, res) => {
 });
 
 module.exports = api;
- 
