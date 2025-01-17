@@ -64,13 +64,15 @@ const fetchStockData = async () => {
     'ICICIBANK.NS',
   ];
   const results = await Promise.all(
-    stockSymbols.map((symbol) =>
-      fetch(
+    stockSymbols.map(async (symbol) => {
+await sleep(100);
+     return fetch(
         `https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?interval=1m&range=15m`
       )
         .then((res) => res.json())
         .then((data) => (data.chart.result ? data.chart.result[0] : null))
         .catch(() => null)
+    }
     )
   );
 
@@ -81,23 +83,17 @@ const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const fetchNewsData = async () => {
   console.log('Fetching news...');
   const urls = [
-    'https://gnews.io/api/v4/search?q=stock+market&lang=en&country=in&topic=business&max=10&apikey=b75a36291e6cfbe5de91e3228688c9ea',
-    'https://gnews.io/api/v4/search?q=share+market&lang=en&country=in&topic=business&max=10&apikey=b75a36291e6cfbe5de91e3228688c9ea',
-    'https://gnews.io/api/v4/search?q=gold&lang=en&country=in&topic=business&max=10&apikey=b75a36291e6cfbe5de91e3228688c9ea',
-    'https://gnews.io/api/v4/search?q=stock+market&lang=en&country=us&topic=business&max=10&apikey=b75a36291e6cfbe5de91e3228688c9ea',
-    'https://gnews.io/api/v4/search?q=share+market&lang=en&country=us&topic=business&max=10&apikey=b75a36291e6cfbe5de91e3228688c9ea',
-    'https://gnews.io/api/v4/search?q=gold&lang=en&country=us&topic=business&max=10&apikey=b75a36291e6cfbe5de91e3228688c9ea',
-  ];
-
-  const topics = ['stock market', 'share market', 'gold'];
-  const countries = ['in', 'us'];
-
+    'https://gnews.io/api/v4/search?q=stock+market&lang=en&country=in&topic=finance&max=10&apikey=b75a36291e6cfbe5de91e3228688c9ea',
+    'https://gnews.io/api/v4/search?q=share+market&lang=en&country=in&topic=finance&max=10&apikey=b75a36291e6cfbe5de91e3228688c9ea',
+    'https://gnews.io/api/v4/search?q=gold&lang=en&country=in&topic=finance&max=10&apikey=b75a36291e6cfbe5de91e3228688c9ea',
+    'https://gnews.io/api/v4/search?q=stock+market&lang=en&country=us&topic=finance&max=10&apikey=b75a36291e6cfbe5de91e3228688c9ea',
+    'https://gnews.io/api/v4/search?q=share+market&lang=en&country=us&topic=finance&max=10&apikey=b75a36291e6cfbe5de91e3228688c9ea',
+    'https://gnews.io/api/v4/search?q=gold&lang=en&country=us&topic=finance&max=10&apikey=b75a36291e6cfbe5de91e3228688c9ea',
+  ]; 
   const results = [];
 
   for (let index = 0; index < urls.length; index++) {
-    const url = urls[index];
-    const topic = topics[Math.floor(index / 2)];
-    const country = countries[index % 2];
+    const url = urls[index];  
 
     try {
       const res = await fetch(url);
@@ -105,22 +101,18 @@ const fetchNewsData = async () => {
  
 
       if (data?.articles?.length > 0) {
-        results.push({
-          topic: `${country} ${topic} news data`,
-          data: data.articles,
-        });
+        results.push( [ data.articles ]);
       } else { 
-        results.push({ topic: `${country} ${topic} news data`, data: [] });
+        results.push(  []  );
       }
     } catch (error) { 
-      results.push({ topic: `${country} ${topic} news data`, data: [] });
+      results.push(  []  );
     }
 
     if (index < urls.length - 1) {
-      await sleep(5000);
+      await sleep(500);
     }
-  }
-
+  } 
   return results;
 };
 
@@ -183,9 +175,9 @@ const getNewsData = async () => {
  
 (async () => {
 
-  await saveStockDataToFile(await fetchStockData()); 
+   saveStockDataToFile(await fetchStockData()); 
  
-  await saveNewsDataToFile(await fetchNewsData());
+  saveNewsDataToFile(await fetchNewsData());
  
 })();
 
