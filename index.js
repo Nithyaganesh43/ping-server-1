@@ -6,9 +6,9 @@ const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
 const compression = require('compression');
 const connectToDB = require('./src/config/database');
-// const ping_pong = require('./src/ping-pong');
-// const api = require('./src/api');
-// const signup = require('./src/router/signup');
+const ping_pong = require('./src/ping-pong');
+const api = require('./src/api');
+const signup = require('./src/router/signup');
 const contact = require("./src/contact")
 const app = express();
 
@@ -39,7 +39,7 @@ app.use(
 app.use(compression());
 app.use(express.json());
 app.use(cookieParser());
-// app.use(ping_pong);
+app.use(ping_pong);
 app.use(contact);
 
 // restrect all other then my fe
