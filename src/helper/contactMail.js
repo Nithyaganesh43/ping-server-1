@@ -92,7 +92,7 @@ const htmlContent = `<!DOCTYPE html>
 
    await transporter.sendMail({
      from: name,
-     to: 'nithyaganesh4343@gmail.com',
+     to: 'contact.markethealers@gmail.com',
      subject: 'New Notification From '+name,
      html: htmlContent,
    });
