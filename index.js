@@ -20,6 +20,7 @@ app.use(
     origin: [
       process.env.FRONT_END_URL,
       'https://market-healers-main-front-end.vercel.app',
+      'https://www.markethealers.com',
       'http://localhost:3000',
       'http://localhost:1234',
     ],
@@ -40,22 +41,22 @@ app.use(compression());
 app.use(express.json());
 app.use(cookieParser());
 app.use(ping_pong);
-app.use(contact);
 
 // restrect all other then my fe
 // app.use((req, res, next) => {
-//   if (req.headers.origin !== process.env.FRONT_END_URL) {
-//     res
-//       .status(403)
-//       .send('Why the hell are you even touching my server? Get lost ');
-//   } else {
-//     next();
-//   }
-// }); 
- 
-app.use(api);
-app.use(signup);
- 
+  //   if (req.headers.origin !== process.env.FRONT_END_URL) {
+    //     res
+    //       .status(403)
+    //       .send('Why the hell are you even touching my server? Get lost ');
+    //   } else {
+      //     next();
+      //   }
+      // }); 
+      
+      app.use(contact);
+      app.use(api);
+      app.use(signup);
+      
 app.use((req, res) => {
   res.status(404).json({ error: 'Page not found' });
 });
