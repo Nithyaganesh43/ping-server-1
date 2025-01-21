@@ -1,6 +1,6 @@
 const contact = require('express').Router();
 const { sendMailToUser, sendMailToMh } = require('./helper/contactMail');
-contact.get('/MarketHealers/contact', async (req, res) => {
+contact.post('/MarketHealers/contact', async (req, res) => {
   try {
     const { name, message, email } = req.body;
     if (!isEmail(email)) {
