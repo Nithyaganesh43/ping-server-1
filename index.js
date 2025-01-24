@@ -17,19 +17,18 @@ app.use(helmet());
 app.use(
   cors({
     origin: (origin, callback) => {
-      const allowedOrigins = 'http://localhost:3000';
-      // [
-      //   'http://localhost:3000', 
-      //   process.env.FRONT_END_URL,
-      //   'https://market-healers-main-front-end.vercel.app',
-      //   'https://www.markethealers.com',
-      //   'http://localhost:1234',
-      // ];
-      // if (!origin || allowedOrigins.includes(origin)) {
+      const allowedOrigins = [
+        'http://localhost:3000', 
+        // process.env.FRONT_END_URL,
+        // 'https://market-healers-main-front-end.vercel.app',
+        // 'https://www.markethealers.com',
+        // 'http://localhost:1234',
+      ];
+      if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true);
-      // } else {
-      //   callback(new Error('Not allowed by CORS'));
-      // }
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
     },
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
