@@ -13,28 +13,19 @@ const contact = require("./src/contact")
 const app = express();
 
 app.use(helmet());
- 
-app.use(
-  cors({
-    origin: (origin, callback) => {
-      const allowedOrigins = [
-        'http://localhost:3000', 
-        // process.env.FRONT_END_URL,
-        // 'https://market-healers-main-front-end.vercel.app',
-        // 'https://www.markethealers.com',
-        // 'http://localhost:1234',
-      ];
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error('Not allowed by CORS'));
-      }
-    },
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-    credentials: true,
-  })
-);
+ app.use(
+   cors({
+     origin: [
+       'http://localhost:3000',
+       'https://auth.markethealers.com',
+       'https://market-healers-main-front-end.vercel.app',
+     ],
+     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+     allowedHeaders: ['Content-Type', 'Authorization'],
+     credentials: true,
+   })
+ );
+
 
 
 app.use(
