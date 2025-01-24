@@ -84,6 +84,24 @@ res.redirect(`/markethealers/auth/newUserInfo?fullname=${userData.fullName}&emai
 }
 );
 
+
+
+//simple auth check route 
+signup.get('/markethealers/auth/authCheck',auth, async (req, res) => {
+  res.send("ok");
+}); 
+
+
+
+
+
+
+
+
+
+
+
+
 //this is the api which is called to check the otp is correct we store the otp in client machine as jwt token and
 // verify the otp provided by the user and the jwt is same. if both the otp are same we create a user in db 
 //and send a temp-token for new user information page new user cannot created without giving user informations
@@ -417,7 +435,9 @@ signup.get("/markethealers/auth/forgotPassword", (req, res) => {
 //redirect user to home oage if and only the user is authorized
 signup.get('/markethealers/auth/home', auth, async (req, res) => { 
   
-  res.redirect(`${FRONT_END_URL}/src/homePage/home.html?id=${req.user._id}`);
+  res.redirect(
+    `https://market-healers-main-front-end.vercel.app/}`
+  );
 });
 
    
