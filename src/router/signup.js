@@ -428,45 +428,48 @@ signup.get("/markethealers/auth/signup", (req, res) => {
 //redirect user to forgotpassword page
 signup.get("/markethealers/auth/forgotPassword", (req, res) => { 
    res.redirect(`${FRONT_END_URL}/src/AuthPage/forgotPassword.html`); 
-     
-});
-  
- 
-//redirect user to home oage if and only the user is authorized
-signup.get('/markethealers/auth/home', auth, async (req, res) => { 
-  
-  res.redirect(
-    `https://market-healers-main-front-end.vercel.app/}`
-  );
-});
-
    
-
-signup.get('/markethealers/auth/getUserInfo', async (req, res) => {
-  try {
-    const id = req.query.id;  
-
-    if (!isValidObjectId(id)) {
-      throw new Error('Invalid User ID');
-    }
-
-    const user = await User.findById(id);
-    if (!user) {
-      throw new Error('User Not Found');
-    }
-
-    res.send(user);
-  } catch (err) {
-    res.status(400).send({ message: err.message });
-  }
-});
-signup.get('/markethealers/auth', auth, (req, res) => {
-  res.redirect('/markethealers/auth/home');
-});
-
-function isEmail(str) {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(str);
-}
+  });
+  
+  
  
-module.exports = signup;
+  
+  
+  signup.get('/markethealers/auth/getUserInfo', async (req, res) => {
+    try {
+      const id = req.query.id;  
+      
+      if (!isValidObjectId(id)) {
+        throw new Error('Invalid User ID');
+      }
+      
+      const user = await User.findById(id);
+      if (!user) {
+        throw new Error('User Not Found');
+      }
+      
+      res.send(user);
+    } catch (err) {
+      res.status(400).send({ message: err.message });
+    }
+  });
+  
+  function isEmail(str) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(str);
+  }
+  signup.get('/markethealers/auth', auth, (req, res) => {
+    res.redirect('/markethealers/auth/home');
+  });
+
+
+   //redirect user to home oage if and only the user is authorized
+  signup.get('/markethealers/auth/home', auth, async (req, res) => { 
+    
+    res.redirect(
+      `https://market-healers-main-front-end.vercel.app/`
+    );
+  });
+  
+  
+  module.exports = signup;
