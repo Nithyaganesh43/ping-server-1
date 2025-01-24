@@ -6,10 +6,10 @@ const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
 const compression = require('compression');
 const connectToDB = require('./src/config/database');
-// const ping_pong = require('./src/ping-pong');
-// const api = require('./src/api');
+const ping_pong = require('./src/ping-pong');
+const api = require('./src/api');
 const signup = require('./src/router/signup');
-// const contact = require("./src/contact")
+const contact = require("./src/contact")
 const app = express();
 
 app.use(helmet());
@@ -40,7 +40,7 @@ app.use(
 app.use(compression());
 app.use(express.json());
 app.use(cookieParser());
-// app.use(ping_pong);
+app.use(ping_pong);
 
 // restrect all other then my fe
 // app.use((req, res, next) => {
@@ -53,8 +53,8 @@ app.use(cookieParser());
       //   }
       // }); 
       
-      // app.use(contact);
-      // app.use(api);
+      app.use(contact);
+      app.use(api);
       app.use(signup);
       
 app.use((req, res) => {
