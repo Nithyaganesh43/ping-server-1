@@ -18,7 +18,9 @@ app.use((req, res, next) => {
   const allowedOrigins = [
     'http://localhost:3000',
     'https://auth.markethealers.com',
-    'https://market-healers-main-front-end.vercel.app',
+    'https://server.markethealers.com',
+    'https://markethealers.markethealers.com',
+    'https://markethealers.com',
   ];
 
   const origin = req.headers.origin;
