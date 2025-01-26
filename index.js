@@ -13,6 +13,7 @@ const contact = require("./src/contact")
 const app = express();
 
 app.use(helmet());
+
 app.use((req, res, next) => {
   const allowedOrigins = [
     'http://localhost:3000',
@@ -26,7 +27,8 @@ app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', origin);
     res.setHeader('Access-Control-Allow-Credentials', 'true');
   } else {
-    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');  
+    res.status(403).json({ error: 'Origin not allowed by CORS' });
+    return;
   }
 
   res.setHeader(
@@ -34,13 +36,15 @@ app.use((req, res, next) => {
     'GET, POST, PUT, DELETE, OPTIONS'
   );
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
- 
+
   if (req.method === 'OPTIONS') {
     return res.status(204).end();
   }
 
   next();
 });
+
+ 
 
 
 app.use(
@@ -71,7 +75,7 @@ app.use(ping_pong);
       app.use(signup);
       
 app.use((req, res) => {
-  res.status(404).json({ error: '404 Page not found' });
+  res.status(404).json({ error: '143 Page not found' });
 });
  
 app.use((err, req, res, next) => {
