@@ -86,10 +86,9 @@ res.redirect(`/markethealers/auth/newUserInfo?fullname=${userData.fullName}&emai
 
 
 
-//simple auth check route 
-signup.get('/markethealers/auth/authCheck',auth, async (req, res) => {
-  res.send("ok");
-}); 
+signup.get('/markethealers/auth/authCheck', auth, async (req, res) => {
+  res.json(req.user);
+});
 
 
 
