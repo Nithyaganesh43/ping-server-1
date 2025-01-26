@@ -98,7 +98,7 @@ signup.get('/markethealers/auth/authCheck', async (req, res) => {
       throw new Error('Failed');
     }
   } catch (err) {
-    console.log(err);
+    console.error("down"+err.message);
     res.status(400).send('unSuccessful');
   }
 });

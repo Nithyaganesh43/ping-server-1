@@ -23,7 +23,12 @@ async function auth(req, res, next) {
       );
     } else {
       req.user = user;
-
+      const token = await user.getJWT();
+      res.cookie('token', token, {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'None',
+      });
       next();
     }
   } catch (err) {
