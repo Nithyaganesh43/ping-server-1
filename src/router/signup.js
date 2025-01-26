@@ -277,8 +277,7 @@ signup.post("/markethealers/auth/forgotPasswordVerifyOtp",async (req,res)=>
       if(otp.length!=6)
       {
         throw new Error("Invalid otp")
-      } 
-      
+      }  
       email=email.trim().toLowerCase();
     const bothAreSame =  jwt.verify(token,process.env.SECRET);
    
