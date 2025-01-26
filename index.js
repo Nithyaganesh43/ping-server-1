@@ -29,8 +29,9 @@ app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', origin);
     res.setHeader('Access-Control-Allow-Credentials', 'true');
   } else {
-    res.status(403).json({ error: 'Origin not allowed by CORS' });
-    return;
+    
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
   }
 
   res.setHeader(
@@ -45,6 +46,8 @@ app.use((req, res, next) => {
 
   next();
 });
+
+
 
  
 
