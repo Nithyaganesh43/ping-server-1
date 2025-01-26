@@ -467,7 +467,7 @@ signup.get("/markethealers/auth/forgotPassword", (req, res) => {
   signup.get('/markethealers/auth/home', auth, async (req, res) => { 
     
     res.redirect(
-      `https://market-healers-main-front-end.vercel.app/`
+      `https://markethealers.com`
     );
   });
   
