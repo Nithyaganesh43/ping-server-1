@@ -1,70 +1,65 @@
-const jwt = require("jsonwebtoken"); 
+const jwt = require('jsonwebtoken');
 
-const User = require("../models/user"); 
-async function auth(req,res,next) {  
-  try{
+const User = require('../models/user');
+async function auth(req, res, next) {
+  try {
     const tokenByUser = req.cookies?.token;
-    if(!tokenByUser){ 
-      throw new Error("Token Not Found");
+    if (!tokenByUser) {
+      throw new Error('Token Not Found');
     }
-    const userid = await jwt.verify(tokenByUser , process.env.SECRET);
-    const user = await User.findById( userid );
-    if(!user){
-      throw new Error("login with github or google")
-    }else if(!user.userName){
-        
-const token = await user.getJWT();
-res.cookie("token",token, { 
-  httpOnly: true, 
-  secure: true, 
-  sameSite: 'None' 
-});
-        res.redirect(
-          `/markethealers/auth/newUserInfo?fullname=${user.fullName}&email=${user.email}&platform=${user.platform}&profileUrl=${user.profileUrl}`
-        );
- 
-       }else{ 
-        
-req.user=user; 
+    const userid = await jwt.verify(tokenByUser, process.env.SECRET);
+    const user = await User.findById(userid);
+    if (!user) {
+      throw new Error('login with google');
+    } else if (!user.userName) {
+      const token = await user.getJWT();
+      res.cookie('token', token, {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'None',
+      });
+      res.redirect(
+        `/markethealers/auth/newUserInfo?fullname=${user.fullName}&email=${user.email}&platform=${user.platform}&profileUrl=${user.profileUrl}`
+      );
+    } else {
+      req.user = user;
 
-       next(); 
-       }
+      next();
     }
-catch(err){  
+  } catch (err) {
     res.redirect(`/markethealers/auth/userAuth`);
- 
-    }
+  }
 }
 
 async function tempAuth(req, res, next) {
   try {
-    const tokenByUser = req.cookies?.token; 
-  
-    
+    const tokenByUser = req.cookies?.token;
 
     if (!tokenByUser) {
-      throw new Error("Token Not Found");
+      throw new Error('Token Not Found');
     }
-    const userid = await jwt.verify(tokenByUser, process.env.SECRET, (err, decoded) => {
-      if (err) { 
-        throw new Error("Token verification failed");
+    const userid = await jwt.verify(
+      tokenByUser,
+      process.env.SECRET,
+      (err, decoded) => {
+        if (err) {
+          throw new Error('Token verification failed');
+        }
+        return decoded;
       }
-      return decoded;
-    });
-    
+    );
 
-    const user = await User.findById(userid); 
-
+    const user = await User.findById(userid);
 
     if (!user) {
-      throw new Error("Login with GitHub or Google");
+      throw new Error('Login with  Google');
     }
- 
-    req.user = user; 
-    next(); 
-  } catch (err) { 
+
+    req.user = user;
+    next();
+  } catch (err) {
     return res.redirect(`/markethealers/auth/userAuth`);
   }
 }
 
-module.exports={ auth , tempAuth };
+module.exports = { auth, tempAuth };

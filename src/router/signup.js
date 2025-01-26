@@ -84,13 +84,23 @@ res.redirect(`/markethealers/auth/newUserInfo?fullname=${userData.fullName}&emai
 }
 );
 
-
-
-signup.get('/markethealers/auth/authCheck', auth, async (req, res) => {
-  res.json(req.user);
+signup.get('/markethealers/auth/authCheck', async (req, res) => {
+  try {
+    const tokenByUser = req.cookies?.token;
+    if (!tokenByUser) {
+      throw new Error('Token Not Found');
+    }
+    const userid = await jwt.verify(tokenByUser, process.env.SECRET);
+    const user = await User.findById(userid);
+    if (user && user.userName) {
+      res.send('ok');
+    } else {
+      throw new Error('Failed');
+    }
+  } catch (err) {
+    res.status(500).send('unSuccessful');
+  }
 });
-
-
 
 
 
