@@ -13,19 +13,23 @@ const contact = require("./src/contact")
 const app = express();
 
 app.use(helmet());
- app.use(
-   cors({
-     origin: [
-       'http://localhost:3000',
-       'https://auth.markethealers.com',
-       'https://market-healers-main-front-end.vercel.app',
-     ],
-     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-     allowedHeaders: ['Content-Type', 'Authorization'],
-     credentials: true,
-   })
- );
-
+app.use(
+  cors({
+    origin: (origin, callback) => { 
+      if (
+        origin === 'http://localhost:3000' ||
+        origin === 'https://auth.markethealers.com' ||
+        origin === 'https://market-healers-main-front-end.vercel.app'
+      ) {
+      } else {
+        callback(null, true); 
+      }
+    },
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true,
+  })
+);
 
 
 app.use(
@@ -56,7 +60,7 @@ app.use(ping_pong);
       app.use(signup);
       
 app.use((req, res) => {
-  res.status(404).json({ error: 'Page not found' });
+  res.status(404).json({ error: '404 Page not found' });
 });
  
 app.use((err, req, res, next) => {
