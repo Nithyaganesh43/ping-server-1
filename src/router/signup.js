@@ -98,17 +98,10 @@ signup.get('/markethealers/auth/authCheck', async (req, res) => {
       throw new Error('Failed');
     }
   } catch (err) {
-    res.status(500).send('unSuccessful');
+    console.log(err);
+    res.status(400).send('unSuccessful');
   }
 });
-
-
-
-
-
-
-
-
 
 
 //this is the api which is called to check the otp is correct we store the otp in client machine as jwt token and
