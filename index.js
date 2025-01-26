@@ -13,23 +13,32 @@ const contact = require("./src/contact")
 const app = express();
 
 app.use(helmet());
-app.use(
-  cors({
-    origin: (origin, callback) => { 
-      if (
-        origin === 'http://localhost:3000' ||
-        origin === 'https://auth.markethealers.com' ||
-        origin === 'https://market-healers-main-front-end.vercel.app'
-      ) {
-      } else {
-        callback(null, true); 
-      }
-    },
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-    credentials: true,
-  })
-);
+app.use((req, res, next) => {
+  const allowedOrigins = [
+    'http://localhost:3000',
+    'https://auth.markethealers.com',
+    'https://market-healers-main-front-end.vercel.app',
+  ];
+
+  const origin = req.headers.origin;
+
+  if (allowedOrigins.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+  }
+
+  res.setHeader(
+    'Access-Control-Allow-Methods',
+    'GET, POST, PUT, DELETE, OPTIONS'
+  );
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+ 
+  if (req.method === 'OPTIONS') {
+    return res.status(204).end();
+  }
+
+  next();
+});
 
 
 app.use(

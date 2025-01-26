@@ -388,8 +388,7 @@ signup.get(`/markethealers/auth/logout`, async (req, res) => {
 
 //api which is called by client for  authentication it just redirects the user to auth page
 signup.get("/markethealers/auth/userAuth",(req,res)=>{
-  res.setHeader('Access-Control-Allow-Origin', `${FRONT_END_URL}`);
-  res.setHeader('Access-Control-Allow-Credentials', 'true');
+ 
  
   res.redirect(`${FRONT_END_URL}/src/AuthPage/authIndex.html`); 
   
