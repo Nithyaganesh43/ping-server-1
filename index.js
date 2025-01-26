@@ -9,44 +9,34 @@ const connectToDB = require('./src/config/database');
 const ping_pong = require('./src/ping-pong');
 const api = require('./src/api');
 const signup = require('./src/router/signup');
-const contact = require("./src/contact")
+const contact = require('./src/contact');
 const app = express();
+
+const allowedOrigins = [
+  'http://localhost:3000',
+  'https://www.markethealers.com',
+  'https://auth.markethealers.com',
+  'https://server.markethealers.com',
+  'https://markethealers.markethealers.com',
+  'https://markethealers.com',
+];
 
 app.use(helmet());
 
-
-
-app.use((req, res, next) => {
-  const allowedOrigins = [
-    'http://localhost:3000',
-    'https://auth.markethealers.com',
-    'https://server.markethealers.com',
-    'https://markethealers.markethealers.com',
-    'https://markethealers.com',
-  ];
-
-  const origin = req.headers.origin;
-
-  if (origin && allowedOrigins.includes(origin)) {
-    res.setHeader('Access-Control-Allow-Origin', origin);
-    res.setHeader('Access-Control-Allow-Credentials', 'true');
-  }
-
-  res.setHeader(
-    'Access-Control-Allow-Methods',
-    'GET, POST, PUT, DELETE, OPTIONS'
-  );
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-
-  if (req.method === 'OPTIONS') {
-    return res.status(204).end();
-  }
-
-  next();
-});
-
- 
-
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (allowedOrigins.includes(origin) || !origin) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'), false);
+      }
+    },
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  })
+);
 
 app.use(
   rateLimit({
@@ -60,25 +50,14 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(ping_pong);
 
-// restrect all other then my fe
-// app.use((req, res, next) => {
-  //   if (req.headers.origin !== process.env.FRONT_END_URL) {
-    //     res
-    //       .status(403)
-    //       .send('Why the hell are you even touching my server? Get lost ');
-    //   } else {
-      //     next();
-      //   }
-      // }); 
-      
-      app.use(contact);
-      app.use(api);
-      app.use(signup);
-      
+app.use(contact);
+app.use(api);
+app.use(signup);
+
 app.use((req, res) => {
   res.status(404).json({ error: '143 Page not found' });
 });
- 
+
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({ error: 'Internal Server Error' });
