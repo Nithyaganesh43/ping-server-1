@@ -246,7 +246,10 @@ signup.post("/markethealers/auth/userLogedIn", async (req, res) => {
       throw new Error("Password Not found");
     }else{
      
-  const user = await User.findOne( {userName:userName} );
+  const user = userName.includes('@')
+    ? await User.findOne({ email: userName })
+    : await User.findOne({ userName });
+
   if(user && password==user.password){
 
     let token = await user.getJWT();
