@@ -61,6 +61,13 @@ async function tempAuth(req, res, next) {
     }
 
     req.user = user;
+    req.user = user;
+    const token = await user.getJWT();
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'None',
+    });
     next();
   } catch (err) {
     return res.redirect(`/markethealers/auth/userAuth`);
