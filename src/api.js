@@ -80,14 +80,15 @@ await sleep(100);
 }; 
 const fetchNewsData = async () => {
   console.log('Fetching news...');
-  const urls = [
-    'https://gnews.io/api/v4/search?q=stock+market&lang=en&country=in&topic=finance&max=10&apikey=b75a36291e6cfbe5de91e3228688c9ea',
-    'https://gnews.io/api/v4/search?q=share+market&lang=en&country=in&topic=finance&max=10&apikey=b75a36291e6cfbe5de91e3228688c9ea',
-    'https://gnews.io/api/v4/search?q=gold&lang=en&country=in&topic=finance&max=10&apikey=b75a36291e6cfbe5de91e3228688c9ea',
-    'https://gnews.io/api/v4/search?q=stock+market&lang=en&country=us&topic=finance&max=10&apikey=b75a36291e6cfbe5de91e3228688c9ea',
-    'https://gnews.io/api/v4/search?q=share+market&lang=en&country=us&topic=finance&max=10&apikey=b75a36291e6cfbe5de91e3228688c9ea',
-    'https://gnews.io/api/v4/search?q=gold&lang=en&country=us&topic=finance&max=10&apikey=b75a36291e6cfbe5de91e3228688c9ea',
-  ]; 
+const urls = [
+  'https://gnews.io/api/v4/search?q=stock+market&lang=en&country=in&topic=finance&max=10&apikey=b75a36291e6cfbe5de91e3228688c9ea',
+  'https://gnews.io/api/v4/search?q=share+market&lang=en&country=in&topic=finance&max=10&apikey=b75a36291e6cfbe5de91e3228688c9ea',
+  'https://gnews.io/api/v4/search?q=gold+prices&lang=en&country=in&topic=finance&max=10&apikey=b75a36291e6cfbe5de91e3228688c9ea',
+  'https://gnews.io/api/v4/search?q=stock+market&lang=en&country=us&topic=finance&max=10&apikey=b75a36291e6cfbe5de91e3228688c9ea',
+  'https://gnews.io/api/v4/search?q=share+market&lang=en&country=us&topic=finance&max=10&apikey=b75a36291e6cfbe5de91e3228688c9ea',
+  'https://gnews.io/api/v4/search?q=gold+prices+and+silver+prices&lang=en&country=us&topic=finance&max=10&apikey=b75a36291e6cfbe5de91e3228688c9ea',
+];
+
   const results = [];
 
   for (let index = 0; index < urls.length; index++) {
@@ -242,7 +243,7 @@ api.get('/MarketHealers/getNewsData', async (req, res) => {
   const timeDifferenceInHours =
     Math.abs(currentDate - lastUpdatedDate) / 1000 / 60 / 60;
 
-  if (timeDifferenceInHours >= 3 && !firstNewsRequest) {
+  if (timeDifferenceInHours >= 6 && !firstNewsRequest) {
     firstNewsRequest = true;
     await saveNewsDataToFile(await fetchNewsData());
     newsData = await getNewsData();
