@@ -20,6 +20,7 @@ const allowedOrigins = [
   'https://server.markethealers.com',
   'https://markethealers.markethealers.com',
   'https://markethealers.com',
+  'https://blog-app-home.vercel.app',
 ];
 
 app.use(helmet());
