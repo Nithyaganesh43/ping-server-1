@@ -14,6 +14,7 @@ const app = express();
 
 const allowedOrigins = [
   'http://localhost:3000',
+  'http://localhost:3001',
   'https://www.markethealers.com',
   'https://auth.markethealers.com',
   'https://server.markethealers.com',
