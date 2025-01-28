@@ -77,9 +77,7 @@ await sleep(100);
   );
 
   return results.filter(Boolean);
-};
-const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-
+}; 
 const fetchNewsData = async () => {
   console.log('Fetching news...');
   const urls = [
@@ -226,15 +224,25 @@ api.get('/MarketHealers/getMarketData', async (req, res) => {
     });
  
 });
-
 let firstNewsRequest = false;
 api.get('/MarketHealers/getNewsData', async (req, res) => {
   let newsData = await getNewsData();
+  const currentDateObj = getCurrentDateObj();
 
-  if (
-    getCurrentDateObj().date != newsData?.lastUpdated?.date &&
-    firstNewsRequest == false
-  ) {
+  const lastUpdated = newsData?.lastUpdated;
+  const lastUpdatedDate = new Date(
+    `${lastUpdated?.date.split('-').reverse().join('-')}T${lastUpdated?.time}`
+  );
+  const currentDate = new Date(
+    `${currentDateObj.date.split('-').reverse().join('-')}T${
+      currentDateObj.time
+    }`
+  );
+
+  const timeDifferenceInHours =
+    Math.abs(currentDate - lastUpdatedDate) / 1000 / 60 / 60;
+
+  if (timeDifferenceInHours >= 3 && !firstNewsRequest) {
     firstNewsRequest = true;
     await saveNewsDataToFile(await fetchNewsData());
     newsData = await getNewsData();
@@ -259,5 +267,6 @@ api.get('/MarketHealers/getNewsData', async (req, res) => {
     data: newsData,
   });
 });
+
 
 module.exports = api;
