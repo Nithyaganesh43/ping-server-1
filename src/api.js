@@ -65,7 +65,9 @@ const fetchStockData = async () => {
   ];
   const results = await Promise.all(
     stockSymbols.map(async (symbol) => {
-await sleep(100);
+      await  new Promise((resolve) => setTimeout(resolve, 100));
+
+
      return fetch(
         `https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?interval=1m&range=15m`
       )
@@ -109,7 +111,8 @@ const urls = [
     }
 
     if (index < urls.length - 1) {
-      await sleep(500);
+      
+      await new Promise((resolve) => setTimeout(resolve, 100));
     }
   } 
   return results;
