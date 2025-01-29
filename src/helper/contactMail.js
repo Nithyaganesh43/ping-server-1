@@ -194,7 +194,6 @@ const htmlContent = `<!DOCTYPE html>
     subject: 'Thank You For Contacting Us',
     html: htmlContent,
   });
-}
-
+} 
 module.exports = { sendMailToUser, sendMailToMh };
  
