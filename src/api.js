@@ -240,6 +240,8 @@ api.get('/MarketHealers/getNewsData', async (req, res) => {
  console.log(newsData);
   if ( !firstNewsRequest) {
     firstNewsRequest = true; 
+    
+  const currentDate = getCurrentDateObj();
     if (newsData.lastUpdated.date != currentDate.date) {
       saveNewsDataToFile(await fetchNewsData());
     }
