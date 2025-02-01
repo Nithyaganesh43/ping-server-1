@@ -178,15 +178,15 @@ const getNewsData = async () => {
 };
  
  
-// (async () => {
-//   const currentDate = getCurrentDateObj();
-// let newsData = await getNewsData(); 
+(async () => {
+  const currentDate = getCurrentDateObj();
+let newsData = await getNewsData(); 
 
-//    saveStockDataToFile(await fetchStockData()); 
-//  if (newsData.lastUpdated.date != currentDate.date){ 
-//    saveNewsDataToFile(await fetchNewsData());
-//  }
-// })();
+   saveStockDataToFile(await fetchStockData()); 
+ if (newsData.lastUpdated.date != currentDate.date){ 
+   saveNewsDataToFile(await fetchNewsData());
+ }
+})();
 
 let firstStockRequest = false;
 api.get('/MarketHealers/getMarketData', async (req, res) => {
