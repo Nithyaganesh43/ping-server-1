@@ -469,7 +469,7 @@ signup.get("/markethealers/auth/forgotPassword", (req, res) => {
    //redirect user to home oage if and only the user is authorized
   signup.get('/markethealers/auth/home', auth, async (req, res) => { 
     
-    res.redirect(`https://markethealers.com`);
+    res.redirect(`https://markethealers.markethealers.com`);
   });
   
   
