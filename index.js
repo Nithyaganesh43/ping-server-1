@@ -10,7 +10,7 @@ const ping_pong = require('./src/ping-pong');
 const api = require('./src/api');
 const signup = require('./src/router/signup');
 const contact = require('./src/contact');
-const app = express();
+const app = express(); 
 app.use(helmet());
 
 const allowedOrigins = [
@@ -54,8 +54,7 @@ app.use(ping_pong);
 
 app.use(contact);
 app.use(api);
-app.use(signup);
-
+app.use(signup); 
 app.use((req, res) => {
   res.status(404).json({ error: '143 Page not found' });
 });
