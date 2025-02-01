@@ -57,23 +57,29 @@ const fetchStockData = async () => {
   console.log('fetched values');
   const stockSymbols = [
     '^NSEI',
-    'RELIANCE.NS',
-    'TCS.NS',
-    'INFY.NS',
-    'HDFCBANK.NS',
-    'ICICIBANK.NS',
+    'AAPL',
+    'MSFT',
+    'AMZN',
+    'GOOGL',
+    'TSLA',
+    // 'NFLX',
+    // 'NVDA',
+    // 'META',
+    // 'INTC',
+    // 'BABA',
+    // 'TSM',
   ];
+
   const results = await Promise.all(
     stockSymbols.map(async (symbol) => {
-      await  new Promise((resolve) => setTimeout(resolve, 100));
-
-
+      await new Promise((resolve) => setTimeout(resolve, 250));
+ 
      return fetch(
         `https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?interval=1m&range=15m`
       )
         .then((res) => res.json())
         .then((data) => (data.chart.result ? data.chart.result[0] : null))
-        .catch(() => null)
+        .catch(() => null);
     }
     )
   );
