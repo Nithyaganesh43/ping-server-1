@@ -23,10 +23,13 @@ const allowedOrigins = [
   'https://markethealers.com',
   'https://blog-app-home.vercel.app',
 ];
+
+
 app.use((req, res, next) => {
-  console.log(req.headers.host); 
+  console.log(req.headers.origin);
   next();
 });
+
 
 
 app.use(
