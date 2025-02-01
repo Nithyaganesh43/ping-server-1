@@ -15,7 +15,6 @@ app.use(helmet());
 
 const allowedOrigins = [
   'http://localhost:3000',
-  'http://localhost:3001',
   'https://www.markethealers.com',
   'https://auth.markethealers.com',
   'https://server.markethealers.com',
@@ -24,28 +23,15 @@ const allowedOrigins = [
   'https://blog-app-home.vercel.app',
 ];
 
-
 app.use((req, res, next) => {
-  console.log(req.headers.origin);
+  const origin = req.headers.origin;
+  if (allowedOrigins.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  }
   next();
 });
-
-
-
-app.use(
-  cors({
-    origin: (origin, callback) => {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error('Not allowed by CORS'), false);
-      }
-    },
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-  })
-);
 
  
 
