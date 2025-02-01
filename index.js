@@ -24,7 +24,7 @@ const allowedOrigins = [
   'https://blog-app-home.vercel.app',
 ];
 app.use((req, res, next) => {
-  console.log(req.headers.origin); 
+  console.log(req.host); 
   next();
 });
 
