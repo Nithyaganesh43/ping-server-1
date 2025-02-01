@@ -103,23 +103,20 @@ const urls = [
     const url = urls[index];  
 
     try {
+      
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       const res = await fetch(url);
       const data = await res.json();
  
 
-      if (data?.articles?.length > 0) {
+      if (data?.articles) {
         results.push( [ data.articles ]);
-      } else { 
-        results.push(  []  );
-      }
+      } 
     } catch (error) { 
-      results.push(  []  );
+     
     }
-
-    if (index < urls.length - 1) {
-      
-      await new Promise((resolve) => setTimeout(resolve, 100));
-    }
+ 
+  
   } 
   return results;
 };
@@ -182,11 +179,13 @@ const getNewsData = async () => {
  
  
 (async () => {
+  const currentDate = getCurrentDateObj();
+let newsData = await getNewsData(); 
 
    saveStockDataToFile(await fetchStockData()); 
- 
-  saveNewsDataToFile(await fetchNewsData());
- 
+ if (newsData.lastUpdated.date != currentDate.date){ 
+   saveNewsDataToFile(await fetchNewsData());
+ }
 })();
 
 let firstStockRequest = false;
@@ -235,26 +234,15 @@ api.get('/MarketHealers/getMarketData', async (req, res) => {
  
 });
 let firstNewsRequest = false;
+
 api.get('/MarketHealers/getNewsData', async (req, res) => {
   let newsData = await getNewsData();
-  const currentDateObj = getCurrentDateObj();
-
-  const lastUpdated = newsData?.lastUpdated;
-  const lastUpdatedDate = new Date(
-    `${lastUpdated?.date.split('-').reverse().join('-')}T${lastUpdated?.time}`
-  );
-  const currentDate = new Date(
-    `${currentDateObj.date.split('-').reverse().join('-')}T${
-      currentDateObj.time
-    }`
-  );
-
-  const timeDifferenceInHours =
-    Math.abs(currentDate - lastUpdatedDate) / 1000 / 60 / 60;
-
-  if (timeDifferenceInHours >= 6 && !firstNewsRequest) {
-    firstNewsRequest = true;
-    await saveNewsDataToFile(await fetchNewsData());
+ console.log(newsData);
+  if ( !firstNewsRequest) {
+    firstNewsRequest = true; 
+    if (newsData.lastUpdated.date != currentDate.date) {
+      saveNewsDataToFile(await fetchNewsData());
+    }
     newsData = await getNewsData();
     firstNewsRequest = false;
   } else {
