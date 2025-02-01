@@ -48,10 +48,15 @@ const validateTime = () => {
 
 
 const isTimeDifferenceLessThan15Minutes = (obj1, obj2) => {
-  const parseDate = ({ date, time }) =>
-    new Date(`${date.split('-').reverse().join('-')}T${time}`);
+  const parseDate = ({ date, time }) => new Date(`${date} ${time}`);
   return Math.abs(parseDate(obj1) - parseDate(obj2)) / 60000 < 15;
 };
+
+function isFourHoursApart(dt1, dt2) {
+  let t1 = new Date(`${dt1.date} ${dt1.time}`);
+  let t2 = new Date(`${dt2.date} ${dt2.time}`);
+  return Math.abs(t2 - t1) >= 4 * 60 * 60 * 1000;
+}
 
 const fetchStockData = async () => {
   console.log('fetched values');
@@ -89,6 +94,8 @@ const fetchStockData = async () => {
 const fetchNewsData = async () => {
   console.log('Fetching news...');
 const urls = [
+  'https://gnews.io/api/v4/top-headlines?country=in&category=business&lang=en&apikey=b75a36291e6cfbe5de91e3228688c9ea',
+  'https://gnews.io/api/v4/top-headlines?country=us&category=business&lang=en&apikey=b75a36291e6cfbe5de91e3228688c9ea',
   'https://gnews.io/api/v4/search?q=stock+market&lang=en&country=in&topic=finance&max=10&apikey=b75a36291e6cfbe5de91e3228688c9ea',
   'https://gnews.io/api/v4/search?q=share+market&lang=en&country=in&topic=finance&max=10&apikey=b75a36291e6cfbe5de91e3228688c9ea',
   'https://gnews.io/api/v4/search?q=gold+prices&lang=en&country=in&topic=finance&max=10&apikey=b75a36291e6cfbe5de91e3228688c9ea',
@@ -126,6 +133,7 @@ const saveNewsDataToFile = async (data) => {
     NEWS_DATA_FILE,
     JSON.stringify({ lastUpdated: getCurrentDateObj(), data: data })
   );
+
 };
 
 const sanitizeData = (inputData) =>
@@ -179,13 +187,17 @@ const getNewsData = async () => {
  
  
 (async () => {
-  const currentDate = getCurrentDateObj();
-let newsData = await getNewsData(); 
+//   const currentDate = getCurrentDateObj();
+// let newsData = await getNewsData(); 
 
-   saveStockDataToFile(await fetchStockData()); 
- if (newsData.lastUpdated.date != currentDate.date){ 
-   saveNewsDataToFile(await fetchNewsData());
- }
+//    saveStockDataToFile(await fetchStockData()); 
+//  if (newsData.lastUpdated.date != currentDate.date){ 
+//    saveNewsDataToFile(await fetchNewsData());
+//  }
+
+  let newsData = await getNewsData();  
+  const currentDate = getCurrentDateObj();
+    console.log(newsData.lastUpdated," ",currentDate) 
 })();
 
 let firstStockRequest = false;
@@ -233,33 +245,37 @@ api.get('/MarketHealers/getMarketData', async (req, res) => {
     });
  
 });
+
+
+
 let firstNewsRequest = false;
 
 api.get('/MarketHealers/getNewsData', async (req, res) => {
   let newsData = await getNewsData(); 
+
+
   if ( !firstNewsRequest) {
     firstNewsRequest = true; 
     
   const currentDate = getCurrentDateObj();
-    if (newsData.lastUpdated.date != currentDate.date) {
+  
+    if (isFourHoursApart(newsData.lastUpdated,currentDate)) {
       saveNewsDataToFile(await fetchNewsData());
+      newsData = await getNewsData();
     }
-    newsData = await getNewsData();
     firstNewsRequest = false;
   } else {
-    function waitForCondition() {
-      return new Promise((resolve) => {
-        const check = () => {
-          if (!firstNewsRequest) {
-            resolve();
-          } else {
-            setTimeout(check, 100);
-          }
-        };
-        check();
-      });
-    }
-    await waitForCondition();
+     
+    await new Promise((resolve) => {
+      const check = () => {
+        if (!firstNewsRequest) {
+          resolve();
+        } else {
+          setTimeout(check, 100);
+        }
+      };
+      check();
+    });
   }
 
   return res.json({
