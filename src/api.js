@@ -5,47 +5,47 @@ const STOCK_DATA_FILE = path.join(__dirname, 'stockData.json');
 const NEWS_DATA_FILE = path.join(__dirname, 'newsData.json');
 
 const getCurrentDateObj = (simulatedDate = null) => {
-  const date =
-    simulatedDate ||
-    new Date().toLocaleString('en-GB', {
-      timeZone: 'Asia/Kolkata',
-      hour12: false,
-    });
+  const date = simulatedDate
+    ? simulatedDate
+    : new Date().toLocaleString('en-US', {
+        timeZone: 'America/New_York',
+        hour12: false,
+      });
   const [datePart, timePart] = date.split(', ');
   return { date: datePart.replace(/\//g, '-'), time: timePart };
 };
 
 const validateTime = () => {
-  const holydays = [
-    '2025-02-26',
-    '2025-03-14',
-    '2025-03-31',
-    '2025-04-10',
-    '2025-04-14',
+  const holidays = [
+    '2025-01-01',
+    '2025-01-20',
+    '2025-02-17',
     '2025-04-18',
-    '2025-05-01',
-    '2025-08-15',
-    '2025-08-27',
-    '2025-10-02',
-    '2025-10-21',
-    '2025-10-22',
-    '2025-11-05',
+    '2025-05-26',
+    '2025-07-04',
+    '2025-09-01',
+    '2025-11-27',
     '2025-12-25',
   ];
+
   const { date, time } = getCurrentDateObj();
-  const currentDate = date;
-  const day = new Date(
-    `${date.split('-').reverse().join('-')}T${time}`
-  ).getDay();
-  const timeInMinutes =
-    parseInt(time.split(':')[0]) * 60 + parseInt(time.split(':')[1]);
+  const [month, day, year] = date.split('-').map(Number);
+  const currentDate = `${year}-${month.toString().padStart(2, '0')}-${day
+    .toString()
+    .padStart(2, '0')}`;
+  const dayOfWeek = new Date(`${currentDate}T${time}-05:00`).getUTCDay();
+  const [hours, minutes] = time.split(':').map(Number);
+  const timeInMinutes = hours * 60 + minutes;
+
   return !(
-    holydays.includes(currentDate) ||
-    [0, 6].includes(day) ||
+    holidays.includes(currentDate) ||
+    dayOfWeek === 0 ||
+    dayOfWeek === 6 ||
     timeInMinutes < 570 ||
-    timeInMinutes > 915
+    timeInMinutes > 960
   );
 };
+
 
 const isTimeDifferenceLessThan15Minutes = (obj1, obj2) => {
   const parseDate = ({ date, time }) =>
@@ -56,14 +56,14 @@ const isTimeDifferenceLessThan15Minutes = (obj1, obj2) => {
 const fetchStockData = async () => {
   console.log('fetched values');
   const stockSymbols = [
-    '^NSEI',
+    // '^NSEI',
     'AAPL',
     'MSFT',
     'AMZN',
     'GOOGL',
     'TSLA',
     // 'NFLX',
-    // 'NVDA',
+    'NVDA',
     // 'META',
     // 'INTC',
     // 'BABA',
