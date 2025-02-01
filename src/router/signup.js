@@ -433,11 +433,7 @@ signup.get("/markethealers/auth/forgotPassword", (req, res) => {
    res.redirect(`${FRONT_END_URL}/src/AuthPage/forgotPassword.html`); 
    
   });
-  
-  
- 
-  
-  
+   
   signup.get('/markethealers/auth/getUserInfo', async (req, res) => {
     try {
       const id = req.query.id;  
@@ -465,6 +461,13 @@ signup.get("/markethealers/auth/forgotPassword", (req, res) => {
     res.redirect('/markethealers/auth/home');
   });
 
+ signup.get('/markethealers/getUserInfo', auth, async (req, res) => {
+   try {
+     res.json({ fullName: req.user.fullName, email: req.user.email });
+   } catch (err) {
+     res.status(400).send({ message: err.message });
+   }
+ });
 
    //redirect user to home oage if and only the user is authorized
   signup.get('/markethealers/auth/home', auth, async (req, res) => { 
