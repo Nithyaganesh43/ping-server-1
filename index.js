@@ -11,6 +11,7 @@ const api = require('./src/api');
 const signup = require('./src/router/signup');
 const contact = require('./src/contact');
 const app = express();
+app.use(helmet());
 
 const allowedOrigins = [
   'http://localhost:3000',
@@ -23,12 +24,10 @@ const allowedOrigins = [
   'https://blog-app-home.vercel.app',
 ];
 
-app.use(helmet());
-
 app.use(
   cors({
     origin: (origin, callback) => {
-      if (allowedOrigins.includes(origin) || !origin) {
+      if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
         callback(new Error('Not allowed by CORS'), false);
@@ -39,6 +38,8 @@ app.use(
     allowedHeaders: ['Content-Type', 'Authorization'],
   })
 );
+
+ 
 
 app.use(
   rateLimit({
