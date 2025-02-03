@@ -5,15 +5,21 @@ const STOCK_DATA_FILE = path.join(__dirname, 'stockData.json');
 const NEWS_DATA_FILE = path.join(__dirname, 'newsData.json');
 
 const getCurrentDateObj = (simulatedDate = null) => {
-  const date =
-    simulatedDate ||
-    new Date().toLocaleString('en-GB', {
-      timeZone: 'Asia/Kolkata',
-      hour12: false,
-    });
+  const date = new Intl.DateTimeFormat('en-GB', {
+    timeZone: 'Asia/Kolkata',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false,
+  }).format(simulatedDate ? new Date(simulatedDate) : new Date());
+
   const [datePart, timePart] = date.split(', ');
   return { date: datePart.replace(/\//g, '-'), time: timePart };
 };
+
 
 const validateTime = () => {
   const holydays = [
