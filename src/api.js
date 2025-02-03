@@ -79,10 +79,17 @@ const fetchStockData = async () => {
   return results.filter(Boolean);
 };
 function isFourHoursApart(dt1, dt2) {
-  let t1 = new Date(`${dt1.date} ${dt1.time}`);
-  let t2 = new Date(`${dt2.date} ${dt2.time}`);
+  const formatDate = (d) => {
+    let [day, month, year] = d.date.split('-');
+    return `${year}-${month}-${day} ${d.time}`;
+  };
+
+  let t1 = new Date(formatDate(dt1));
+  let t2 = new Date(formatDate(dt2));
+
   return Math.abs(t2 - t1) >= 4 * 60 * 60 * 1000;
 }
+
 const fetchNewsData = async () => {
   console.log('Fetching news...');
   const urls = [
