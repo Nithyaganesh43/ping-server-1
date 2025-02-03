@@ -13,8 +13,7 @@ const contact = require('./src/contact');
 const app = express(); 
 app.use(helmet());
 
-const allowedOrigins = [
-  'http://localhost:3000',
+const allowedOrigins = [ 
   'https://www.markethealers.com',
   'https://auth.markethealers.com',
   'https://server.markethealers.com',

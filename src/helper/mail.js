@@ -1,21 +1,20 @@
 const nodemailer = require('nodemailer');
-const otpLimiter = require("../helper/otpLimiter");
- 
+const otpLimiter = require('../helper/otpLimiter');
 
 async function sendMail(otp, toEmail) {
-    await otpLimiter(toEmail);
+  await otpLimiter(toEmail);
 
-    const transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-            user: 'OTP.markethealers@gmail.com',
-            pass: process.env.PASSWORD
-        }
-    });
+  const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: 'OTP.markethealers@gmail.com',
+      pass: process.env.PASSWORD,
+    },
+  });
 
-    const subject = 'Your OTP Code';
+  const subject = 'Your OTP Code';
 
-    const htmlContent = `<html>
+  const htmlContent = `<html>
     <head>
         <style>
             body {
@@ -157,12 +156,12 @@ async function sendMail(otp, toEmail) {
     </body>
 </html>`;
 
-    const info = await transporter.sendMail({
-        from: 'Market Healers',
-        to: toEmail,
-        subject: subject,
-        html: htmlContent
-    });
+  const info = await transporter.sendMail({
+    from: 'Market Healers',
+    to: toEmail,
+    subject: subject,
+    html: htmlContent,
+  });
 }
 
 module.exports = sendMail;
