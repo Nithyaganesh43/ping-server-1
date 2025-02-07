@@ -14,6 +14,7 @@ const app = express();
 app.use(helmet());
 
 const allowedOrigins = [ 
+  'http://localhost:3000',
   'https://www.markethealers.com',
   'https://auth.markethealers.com',
   'https://server.markethealers.com',
