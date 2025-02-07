@@ -146,6 +146,7 @@ const sanitizeData = (inputData) =>
       regularMarketDayLow: meta.regularMarketDayLow,
       regularMarketVolume: meta.regularMarketVolume,
       longName: meta.longName,
+      symbol: meta.symbol,
     },
     values: {
       timestamp,
