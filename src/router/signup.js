@@ -89,6 +89,7 @@ signup.get(
 );
 
 signup.get('/markethealers/auth/authCheck', async (req, res) => {
+  console.log(req.cookies); 
   try {
     const tokenByUser = req.cookies?.token;
     if (!tokenByUser) {
