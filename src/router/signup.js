@@ -103,7 +103,7 @@ signup.get('/markethealers/auth/authCheck', async (req, res) => {
       throw new Error('User Not Exist');
     }
   } catch (err) {
-    console.error('down' + err.message);
+    console.error('down ' + err.message);
     res.status(400).send('unSuccessful');
   }
 });
@@ -139,7 +139,6 @@ signup.post(
 
       const newUser = new User(userData);
       token = await newUser.getJWT();
-      //console.log("token send");
 
       res.cookie('token', token, {
         httpOnly: true,
