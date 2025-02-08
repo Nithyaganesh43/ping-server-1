@@ -66,7 +66,8 @@ signup.get(
         res.cookie('token', token, {
           httpOnly: true,
           secure: true,
-          sameSite: 'None',
+          sameSite: 'None', 
+  maxAge: 365 * 24 * 60 * 60 * 1000, 
         });
         res.redirect(`/markethealers/auth/home`);
       } else {
@@ -76,7 +77,8 @@ signup.get(
         res.cookie('token', token, {
           httpOnly: true,
           secure: true,
-          sameSite: 'None',
+          sameSite: 'None', 
+  maxAge: 365 * 24 * 60 * 60 * 1000, 
         });
         res.redirect(
           `/markethealers/auth/newUserInfo?fullname=${userData.fullName}&email=${userData.email}&platform=${userData.platform}&profileUrl=${userData.profileUrl}`
@@ -144,7 +146,8 @@ signup.post(
       res.cookie('token', token, {
         httpOnly: true,
         secure: true,
-        sameSite: 'None',
+        sameSite: 'None', 
+  maxAge: 365 * 24 * 60 * 60 * 1000, 
       });
 
       await newUser.save();
@@ -192,7 +195,8 @@ signup.post('/markethealers/auth/auth/markethealers', async (req, res) => {
     res.cookie('token', jwtOTP, {
       httpOnly: true,
       secure: true,
-      sameSite: 'None',
+      sameSite: 'None', 
+  maxAge: 365 * 24 * 60 * 60 * 1000, 
     });
     res.send({ message: 'otp send' });
   } catch (err) {
@@ -239,7 +243,8 @@ signup.post(
         res.cookie('token', token, {
           httpOnly: true,
           secure: true,
-          sameSite: 'None',
+          sameSite: 'None', 
+  maxAge: 365 * 24 * 60 * 60 * 1000, 
         });
         res.send({ message: 'successfully user registred' });
       } else {
@@ -270,7 +275,8 @@ signup.post('/markethealers/auth/userLogedIn', async (req, res) => {
         res.cookie('token', token, {
           httpOnly: true,
           secure: true,
-          sameSite: 'None',
+          sameSite: 'None', 
+  maxAge: 365 * 24 * 60 * 60 * 1000, 
         });
         res.send({ message: 'successfully user registred' });
       } else {
@@ -311,7 +317,8 @@ signup.post('/markethealers/auth/forgotPasswordVerifyOtp', async (req, res) => {
     res.cookie('token', token, {
       httpOnly: true,
       secure: true,
-      sameSite: 'None',
+      sameSite: 'None', 
+  maxAge: 365 * 24 * 60 * 60 * 1000, 
     });
     res.send({ status: ' success', message: 'SignUp successfull' });
   } catch (err) {
@@ -355,7 +362,8 @@ signup.post('/markethealers/auth/forgotPasswordGetOtp', async (req, res) => {
     res.cookie('token', jwtOTP, {
       httpOnly: true,
       secure: true,
-      sameSite: 'None',
+      sameSite: 'None', 
+  maxAge: 365 * 24 * 60 * 60 * 1000, 
     });
     res.send({ message: 'otp send' });
   } catch (err) {
@@ -396,7 +404,8 @@ signup.get(`/markethealers/auth/logout`, async (req, res) => {
   res.cookie('token', '', {
     httpOnly: true,
     secure: true,
-    sameSite: 'None',
+    sameSite: 'None', 
+  maxAge: 365 * 24 * 60 * 60 * 1000, 
   });
   res.send('logout');
 });
@@ -415,7 +424,8 @@ signup.get('/markethealers/auth/newUserInfo', tempAuth, async (req, res) => {
   res.cookie('token', jwt, {
     httpOnly: true,
     secure: true,
-    sameSite: 'None',
+    sameSite: 'None', 
+  maxAge: 365 * 24 * 60 * 60 * 1000, 
   });
 
   if (req.user.password && req.user.userName) {

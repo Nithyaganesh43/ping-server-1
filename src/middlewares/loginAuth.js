@@ -16,7 +16,8 @@ async function auth(req, res, next) {
       res.cookie('token', token, {
         httpOnly: true,
         secure: true,
-        sameSite: 'None',
+        sameSite: 'None', 
+  maxAge: 365 * 24 * 60 * 60 * 1000, 
       });
       res.redirect(
         `/markethealers/auth/newUserInfo?fullname=${user.fullName}&email=${user.email}&platform=${user.platform}&profileUrl=${user.profileUrl}`
@@ -27,7 +28,8 @@ async function auth(req, res, next) {
       res.cookie('token', token, {
         httpOnly: true,
         secure: true,
-        sameSite: 'None',
+        sameSite: 'None', 
+  maxAge: 365 * 24 * 60 * 60 * 1000, 
       });
       next();
     }
@@ -66,7 +68,8 @@ async function tempAuth(req, res, next) {
     res.cookie('token', token, {
       httpOnly: true,
       secure: true,
-      sameSite: 'None',
+      sameSite: 'None', 
+  maxAge: 365 * 24 * 60 * 60 * 1000, 
     });
     next();
   } catch (err) {
