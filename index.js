@@ -1,6 +1,5 @@
 require('dotenv').config();
-const express = require('express');
-const cors = require('cors');
+const express = require('express'); 
 const cookieParser = require('cookie-parser');
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
@@ -47,11 +46,12 @@ app.use((req, res, next) => {
 });
 
 
+app.use(ping_pong);
  
 
 app.use(
   rateLimit({
-    windowMs: 1 * 60 * 1000,
+    windowMs: 10 * 60 * 1000,
     max: 60,
     message: 'Too many requests, please try again later.',
   })
@@ -59,7 +59,6 @@ app.use(
 app.use(compression());
 app.use(express.json());
 app.use(cookieParser());
-app.use(ping_pong);
 
 
 app.use(signup); 
