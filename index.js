@@ -69,7 +69,7 @@ app.use((req, res, next) => {
   else res
     .status(69)
     .send(
-      `Nice try, Mr. Joker. You can’t even plug a single hair here. Get lost.`
+      `Nice try, Slacker. You can’t even plug a single hair here. Get lost.`
     );
 });
 
