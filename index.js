@@ -1,5 +1,5 @@
 require('dotenv').config();
-const express = require('express'); 
+const express = require('express');
 const cookieParser = require('cookie-parser');
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
@@ -9,7 +9,7 @@ const ping_pong = require('./src/ping-pong');
 const api = require('./src/api');
 const signup = require('./src/router/signup');
 const contact = require('./src/contact');
-const app = express(); 
+const app = express();
 app.use(helmet());
 
 const allowedOrigins = [
@@ -45,9 +45,7 @@ app.use((req, res, next) => {
   next();
 });
 
-
 app.use(ping_pong);
- 
 
 app.use(
   rateLimit({
@@ -60,16 +58,11 @@ app.use(compression());
 app.use(express.json());
 app.use(cookieParser());
 
-
-app.use(signup); 
+app.use(signup);
 
 app.use((req, res, next) => {
-  if (req.get('origin') == 'https://markethealers.markethealers.com') next();
-  else res
-    .status(69)
-    .send(
-      `Nice try, Slacker. You can’t even plug a single hair here. Get lost.`
-    );
+  if (req.get('origin') == 'https://markethealers.markethealers.com'){ next();}
+  else{res.status(400).send(`Nice try, Slacker. You can’t even plug a single hair here. Get lost.`);}
 });
 
 app.use(api);
