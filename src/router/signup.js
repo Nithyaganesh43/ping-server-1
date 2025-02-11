@@ -98,14 +98,12 @@ signup.get('/markethealers/auth/authCheck', async (req, res) => {
     }
     const userid = await jwt.verify(tokenByUser, process.env.SECRET);
     const user = await User.findById(userid);
-    if (user) {
-      console.log(user.userName);
+    if (user) { 
       res.send('ok');
     } else {
       throw new Error('User Not Exist');
     }
-  } catch (err) {
-    console.error('down ' + err.message);
+  } catch (err) { 
     res.status(400).send('unSuccessful');
   }
 });
