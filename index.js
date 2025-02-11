@@ -66,7 +66,11 @@ app.use(signup);
 
 app.use((req, res, next) => {
   if (req.get('origin') == 'https://markethealers.markethealers.com') next();
-  else res.status(400).send('If you are bad I am your dad');
+  else res
+    .status(69)
+    .send(
+      `Nice try, Mr. Joker. You can’t even plug a single hair here. Get lost.`
+    );
 });
 
 app.use(api);
