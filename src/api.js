@@ -200,6 +200,8 @@ const getNewsData = async () => {
   }
 })();
 
+
+
 let firstStockRequest = false;
 api.get('/MarketHealers/getMarketData', async (req, res) => {
   const requestTime = getCurrentDateObj();

@@ -60,14 +60,17 @@ app.use(compression());
 app.use(express.json());
 app.use(cookieParser());
 app.use(ping_pong);
+
+
+app.use(signup); 
+
 app.use((req, res, next) => {
-  console.log('Request Origin:', req.get('origin'));
-  next();
+  if (req.get('origin') == 'https://markethealers.markethealers.com') next();
+  else res.status(400).send('If you are bad I am your dad');
 });
 
-app.use(contact);
 app.use(api);
-app.use(signup); 
+app.use(contact);
 app.use((req, res) => {
   res.status(404).json({ error: '143 Page not found' });
 });
