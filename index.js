@@ -60,6 +60,10 @@ app.use(compression());
 app.use(express.json());
 app.use(cookieParser());
 app.use(ping_pong);
+app.use((req, res, next) => {
+  console.log('Request Origin:', req.get('origin'));
+  next();
+});
 
 app.use(contact);
 app.use(api);
