@@ -72,9 +72,10 @@ app.use((req, res) => {
 });
 
 app.use((err, req, res, next) => {
-  console.error('Internal Server Error');
+  console.error('Error:', err);  
   res.status(500).json({ error: 'Internal Server Error' });
 });
+
 
 connectToDB()
   .then(() => {
