@@ -2,7 +2,7 @@ const api = require('express').Router();
 const fs = require('fs').promises;
 const path = require('path');
 const STOCK_DATA_FILE = path.join(__dirname, 'stockData.json');
-let NEWS_DATA_FILE;
+let NEWS_DATA_FILE='';
 
 const getCurrentDateObj = (simulatedDate = null) => {
   const date = new Intl.DateTimeFormat('en-GB', {
@@ -193,6 +193,7 @@ const getNewsData = async () => {
   }else{
       saveNewsDataToFile(await fetchNewsData()); 
   }
+  console.log(NEWS_DATA_FILE=='');
 })();
 
 
@@ -245,6 +246,8 @@ api.get('/MarketHealers/getMarketData', async (req, res) => {
 let firstNewsRequest = false;
 
 api.get('/MarketHealers/getNewsData', async (req, res) => {
+  console.log(NEWS_DATA_FILE == '');
+
   let newsData = await getNewsData();
 
   if (!firstNewsRequest ) {
@@ -270,7 +273,9 @@ api.get('/MarketHealers/getNewsData', async (req, res) => {
     });
   }
 
+  console.log(NEWS_DATA_FILE == '');
   return res.json({
+
     data: newsData,
   });
 });
