@@ -6,13 +6,12 @@ ping_pong.get('/ping', async (req, res) => {
   if(!pingCycle){
   pingCycle = true;
   if (pingCycle) {
+    console.log('Pong Pong Server 1');
     setTimeout(() => {
       callback();
     }, 300000);
+  } 
   }
-  
-  }
-  console.log('Pong Pong Server 1');
   res.send('Pong from Server 1');
  
 });
