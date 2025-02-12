@@ -2,7 +2,7 @@ const api = require('express').Router();
 const fs = require('fs').promises;
 const path = require('path');
 const STOCK_DATA_FILE = path.join(__dirname, 'stockData.json');
-const NEWS_DATA_FILE = path.join(__dirname, 'newsData.json');
+let NEWS_DATA_FILE;
 
 const getCurrentDateObj = (simulatedDate = null) => {
   const date = new Intl.DateTimeFormat('en-GB', {
@@ -128,10 +128,7 @@ const fetchNewsData = async () => {
 };
 
 const saveNewsDataToFile = async (data) => {
-  await fs.writeFile(
-    NEWS_DATA_FILE,
-    JSON.stringify({ lastUpdated: getCurrentDateObj(), data: data })
-  );
+    NEWS_DATA_FILE=JSON.stringify({ lastUpdated: getCurrentDateObj(), data: data })
 };
 
 const sanitizeData = (inputData) =>
@@ -180,23 +177,21 @@ const loadDataFromFile = async (FILE) => {
   }
 };
 const getNewsData = async () => {
-  const data = await loadDataFromFile(NEWS_DATA_FILE);
-  return data;
+ return NEWS_DATA_FILE;
 };
 
 (async () => {
   const currentDate = getCurrentDateObj();
   let newsData = await getNewsData();
 
-  saveStockDataToFile(await fetchStockData());
+  // saveStockDataToFile(await fetchStockData());
   if(newsData){
 
     if (isFourHoursApart(newsData.lastUpdated, currentDate)) {
       saveNewsDataToFile(await fetchNewsData());
     }
   }else{
-      saveNewsDataToFile(await fetchNewsData());
-    
+      saveNewsDataToFile(await fetchNewsData()); 
   }
 })();
 
