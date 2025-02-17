@@ -18,7 +18,7 @@ ping_pong.get('/ping', async (req, res) => {
 
 (async () => {
   pingCycle=false;
-  await fetch('https://ping-server-2.onrender.com/ping')
+  await fetch('https://ping-server-2-3ebj.onrender.com/ping')
     .then((res) => {
       if (res.ok) {
         console.log('Server 2 is responding:', res.status);
@@ -33,7 +33,7 @@ ping_pong.get('/ping', async (req, res) => {
 
 function callback() { 
   pingCycle=false;
-  fetch('https://ping-server-2.onrender.com/ping')
+  fetch('https://ping-server-2-3ebj.onrender.com/ping')
     .then((res) => {
       if (res.ok) {
         console.log('Server 2 is responding:', res.status);
