@@ -113,7 +113,7 @@ signup.get('/markethealers/auth/authCheck', async (req, res) => {
 signup.post(
   '/markethealers/auth/auth/markethealers/verifyotp',rateLimit({
   windowMs: 15 * 60 * 1000,  
-  max: 5,
+  max: 100,
   message: 'Too many login attempts, try again later',
 }),
   async (req, res) => {
@@ -163,7 +163,7 @@ signup.post(
 //auth/markethealers
 signup.post('/markethealers/auth/auth/markethealers',rateLimit({
   windowMs: 15 * 60 * 1000,  
-  max: 5,
+  max: 100,
   message: 'Too many login attempts, try again later',
 }), async (req, res) => {
   try {
@@ -213,7 +213,7 @@ signup.post('/markethealers/auth/auth/markethealers',rateLimit({
 signup.post(
   '/markethealers/auth/signupSuccessful',rateLimit({
   windowMs: 15 * 60 * 1000,  
-  max: 5,
+  max: 100,
   message: 'Too many login attempts, try again later',
 }),
   tempAuth,
@@ -268,7 +268,7 @@ signup.post(
 //this api works for login is the user gives correct username and password it gives jwt else it say 404
 signup.post('/markethealers/auth/userLogedIn',rateLimit({
   windowMs: 15 * 60 * 1000,  
-  max: 5,
+  max: 100,
   message: 'Too many login attempts, try again later',
 }), async (req, res) => {
   
@@ -304,7 +304,7 @@ signup.post('/markethealers/auth/userLogedIn',rateLimit({
 //forgotPasswordVerifyOtp-works only for markethealers authentication same as that markethealers/auth
 signup.post('/markethealers/auth/forgotPasswordVerifyOtp',rateLimit({
   windowMs: 15 * 60 * 1000,  
-  max: 5,
+  max: 100,
   message: 'Too many login attempts, try again later',
 }), async (req, res) => {
   try {
@@ -346,7 +346,7 @@ signup.post('/markethealers/auth/forgotPasswordVerifyOtp',rateLimit({
 //forgotPasswordGetOtp- same as markethealers/auth/verifyotp api
 signup.post('/markethealers/auth/forgotPasswordGetOtp',rateLimit({
   windowMs: 15 * 60 * 1000,  
-  max: 5,
+  max: 100,
   message: 'Too many login attempts, try again later',
 }), async (req, res) => {
   try {
@@ -395,7 +395,7 @@ signup.post('/markethealers/auth/forgotPasswordGetOtp',rateLimit({
 // on successfully validated the forgotpasswored api this api used to reset the password by updating it
 signup.post('/markethealers/auth/resetPassword',rateLimit({
   windowMs: 15 * 60 * 1000,  
-  max: 5,
+  max: 100,
   message: 'Too many login attempts, try again later',
 }), auth, async (req, res) => {
   try {
@@ -444,7 +444,7 @@ signup.get('/markethealers/auth/userAuth', (req, res) => {
 //user need to be authorized to use this api
 signup.get('/markethealers/auth/newUserInfo',rateLimit({
   windowMs: 15 * 60 * 1000,  
-  max: 5,
+  max: 100,
   message: 'Too many login attempts, try again later',
 }), tempAuth, async (req, res) => {
   const { fullname, email, platform, profileUrl } = req.query;
@@ -482,7 +482,7 @@ signup.get('/markethealers/auth/forgotPassword', (req, res) => {
 
 signup.get('/markethealers/auth/getUserInfo',rateLimit({
   windowMs: 15 * 60 * 1000,  
-  max: 5,
+  max: 100,
   message: 'Too many login attempts, try again later',
 }), async (req, res) => {
   try {
