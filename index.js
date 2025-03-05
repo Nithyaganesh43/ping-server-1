@@ -69,7 +69,7 @@ app.use(ping_pong);
 app.use(
   rateLimit({
     windowMs: 5 * 60 * 1000,
-    max: 30,
+    max: 100,
     message: 'Too many requests, slow down!',
   })
 );
