@@ -3,7 +3,7 @@ const fs = require('fs').promises;
 const path = require('path');
 const STOCK_DATA_FILE = path.join(__dirname, 'stockData.json');
 const NEWS_DATA_FILE = path.join(__dirname, 'newsData.json');
-const auth = require('./middlewares/loginAuth');
+const {auth} = require('./middlewares/loginAuth');
 api.use(auth);
 const getCurrentDateObj = (simulatedDate = null) => {
   const date = new Intl.DateTimeFormat('en-GB', {
