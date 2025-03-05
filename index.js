@@ -77,12 +77,24 @@ app.use((req, res, next) => {
     next();
   } else {
     res
-      .status(400)
+      .status(403)
       .send(
         '🤡'
       );
   }
 });
+
+app.use((req, res, next) => {
+  if (
+    req.get('referer')?.startsWith('https://markethealers.markethealers.com') ||
+    req.get('referer')?.startsWith('https://markethealers.com')
+  ) {
+    next();
+  } else {
+    res.status(403).send('🤡');
+  }
+});
+
 
 app.use(contact);
 app.use(api);
