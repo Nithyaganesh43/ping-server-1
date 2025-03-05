@@ -14,8 +14,19 @@ const signup = require('./src/router/signup');
 const contact = require('./src/contact');
 
 const app = express();
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'"],
+        objectSrc: ["'none'"],
+        upgradeInsecureRequests: [],
+      },
+    },
+  })
+);
 
-app.use(helmet());
 app.use(mongoSanitize());
 app.use(xss()); 
 app.use(morgan('combined'));

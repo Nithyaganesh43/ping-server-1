@@ -12,8 +12,7 @@ const mail = require('../helper/mail');
 const validateUserInfromations = require('../helper/validateUserInfromations');
 const jwt = require('jsonwebtoken');
 
-signup.use(passport.initialize());
-
+signup.use(passport.initialize()); 
 //GoogleStrategy
 passport.use(
   new GoogleStrategy(
@@ -112,7 +111,11 @@ signup.get('/markethealers/auth/authCheck', async (req, res) => {
 // verify the otp provided by the user and the jwt is same. if both the otp are same we create a user in db
 //and send a temp-token for new user information page new user cannot created without giving user informations
 signup.post(
-  '/markethealers/auth/auth/markethealers/verifyotp',
+  '/markethealers/auth/auth/markethealers/verifyotp',rateLimit({
+  windowMs: 15 * 60 * 1000,  
+  max: 5,
+  message: 'Too many login attempts, try again later',
+}),
   async (req, res) => {
     try {
       let { token } = req.cookies;
@@ -158,7 +161,11 @@ signup.post(
 //this is the api with takes email and imput and validats it and send a otp to that email and saves the otp in the clients machine
 //as jwt token for verification purpose seen in above api
 //auth/markethealers
-signup.post('/markethealers/auth/auth/markethealers', async (req, res) => {
+signup.post('/markethealers/auth/auth/markethealers',rateLimit({
+  windowMs: 15 * 60 * 1000,  
+  max: 5,
+  message: 'Too many login attempts, try again later',
+}), async (req, res) => {
   try {
     let { email } = req.body;
     if (!email) {
@@ -204,7 +211,11 @@ signup.post('/markethealers/auth/auth/markethealers', async (req, res) => {
 //after the new user giving the information validation takes place then we are updating the user data
 
 signup.post(
-  '/markethealers/auth/signupSuccessful',
+  '/markethealers/auth/signupSuccessful',rateLimit({
+  windowMs: 15 * 60 * 1000,  
+  max: 5,
+  message: 'Too many login attempts, try again later',
+}),
   tempAuth,
   async (req, res) => {
     try {
@@ -255,7 +266,12 @@ signup.post(
 );
 
 //this api works for login is the user gives correct username and password it gives jwt else it say 404
-signup.post('/markethealers/auth/userLogedIn', async (req, res) => {
+signup.post('/markethealers/auth/userLogedIn',rateLimit({
+  windowMs: 15 * 60 * 1000,  
+  max: 5,
+  message: 'Too many login attempts, try again later',
+}), async (req, res) => {
+  
   try {
     let { userName, password } = req.body;
     if (!userName) {
@@ -286,7 +302,11 @@ signup.post('/markethealers/auth/userLogedIn', async (req, res) => {
 });
 
 //forgotPasswordVerifyOtp-works only for markethealers authentication same as that markethealers/auth
-signup.post('/markethealers/auth/forgotPasswordVerifyOtp', async (req, res) => {
+signup.post('/markethealers/auth/forgotPasswordVerifyOtp',rateLimit({
+  windowMs: 15 * 60 * 1000,  
+  max: 5,
+  message: 'Too many login attempts, try again later',
+}), async (req, res) => {
   try {
     let { token } = req.cookies;
     let { otp, email } = req.body;
@@ -324,7 +344,11 @@ signup.post('/markethealers/auth/forgotPasswordVerifyOtp', async (req, res) => {
 });
 
 //forgotPasswordGetOtp- same as markethealers/auth/verifyotp api
-signup.post('/markethealers/auth/forgotPasswordGetOtp', async (req, res) => {
+signup.post('/markethealers/auth/forgotPasswordGetOtp',rateLimit({
+  windowMs: 15 * 60 * 1000,  
+  max: 5,
+  message: 'Too many login attempts, try again later',
+}), async (req, res) => {
   try {
     let { email } = req.body;
     if (!email) {
@@ -369,7 +393,11 @@ signup.post('/markethealers/auth/forgotPasswordGetOtp', async (req, res) => {
 });
 
 // on successfully validated the forgotpasswored api this api used to reset the password by updating it
-signup.post('/markethealers/auth/resetPassword', auth, async (req, res) => {
+signup.post('/markethealers/auth/resetPassword',rateLimit({
+  windowMs: 15 * 60 * 1000,  
+  max: 5,
+  message: 'Too many login attempts, try again later',
+}), auth, async (req, res) => {
   try {
     let { password } = req.body;
     if (!password) {
@@ -414,7 +442,11 @@ signup.get('/markethealers/auth/userAuth', (req, res) => {
 
 //is the user is a new user he/she must give the information about them to create a new account here and
 //user need to be authorized to use this api
-signup.get('/markethealers/auth/newUserInfo', tempAuth, async (req, res) => {
+signup.get('/markethealers/auth/newUserInfo',rateLimit({
+  windowMs: 15 * 60 * 1000,  
+  max: 5,
+  message: 'Too many login attempts, try again later',
+}), tempAuth, async (req, res) => {
   const { fullname, email, platform, profileUrl } = req.query;
   const jwt = await req.user.getJWT();
 
@@ -448,7 +480,11 @@ signup.get('/markethealers/auth/forgotPassword', (req, res) => {
   res.redirect(`${FRONT_END_URL}/src/AuthPage/forgotPassword.html`);
 });
 
-signup.get('/markethealers/auth/getUserInfo', async (req, res) => {
+signup.get('/markethealers/auth/getUserInfo',rateLimit({
+  windowMs: 15 * 60 * 1000,  
+  max: 5,
+  message: 'Too many login attempts, try again later',
+}), async (req, res) => {
   try {
     const id = req.query.id;
 
@@ -461,7 +497,7 @@ signup.get('/markethealers/auth/getUserInfo', async (req, res) => {
       throw new Error('User Not Found');
     }
 
-    res.send(user);
+    res.send({fullName : user.fullName ,email: user.email});
   } catch (err) {
     res.status(400).send({ message: err.message });
   }
