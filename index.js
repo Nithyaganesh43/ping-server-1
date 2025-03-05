@@ -58,6 +58,7 @@ app.use(compression());
 app.use(express.json());
 app.use(cookieParser());
 
+app.use(contact);
 app.use(signup);
 
 app.use((req, res, next) => {
@@ -66,7 +67,6 @@ app.use((req, res, next) => {
 });
 
 app.use(api);
-app.use(contact);
 app.use((req, res) => {
   res.status(404).json({ error: '143 Page not found' });
 });
