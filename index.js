@@ -6,7 +6,6 @@ const helmet = require('helmet');
 const compression = require('compression');
 const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
-const csrf = require('csurf');
 const morgan = require('morgan');
 const connectToDB = require('./src/config/database');
 const ping_pong = require('./src/ping-pong');
@@ -18,8 +17,7 @@ const app = express();
 
 app.use(helmet());
 app.use(mongoSanitize());
-app.use(xss());
-app.use(csrf());
+app.use(xss()); 
 app.use(morgan('combined'));
 
 const allowedOrigins = [
