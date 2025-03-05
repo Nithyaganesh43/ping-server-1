@@ -12,6 +12,8 @@ const ping_pong = require('./src/ping-pong');
 const api = require('./src/api');
 const signup = require('./src/router/signup');
 const contact = require('./src/contact');
+app.use(express.json({ limit: '10kb' }));
+app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 
 const app = express();
 app.use(
@@ -103,6 +105,19 @@ app.use((req, res, next) => {
     res.status(403).send('🤡');
   }
 });
+const sanitizeInput = (req, res, next) => {
+  let found = false;
+  for (let key in req.body) {
+    if (/[<>$]/.test(req.body[key])) {
+      found = true;
+      break;
+    }
+  }
+  if (found) return res.status(403).send('🤡');
+  next();
+};
+
+app.use(sanitizeInput);
 
 
 app.use(contact);
