@@ -79,7 +79,7 @@ app.use((req, res, next) => {
     res
       .status(400)
       .send(
-        'Oh wow, such hacking skills! But Denied. Maybe come back after a cybersecurity course? 🤡 👉 <a href="https://youtu.be/hXSFdwIOfnE?feature=shared" target="_blank">Cybersecurity Course</a>'
+        '🤡'
       );
   }
 });
