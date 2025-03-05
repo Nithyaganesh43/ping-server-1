@@ -4,13 +4,23 @@ const cookieParser = require('cookie-parser');
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
 const compression = require('compression');
+const mongoSanitize = require('express-mongo-sanitize');
+const xss = require('xss-clean');
+const csrf = require('csurf');
+const morgan = require('morgan');
 const connectToDB = require('./src/config/database');
 const ping_pong = require('./src/ping-pong');
 const api = require('./src/api');
 const signup = require('./src/router/signup');
 const contact = require('./src/contact');
+
 const app = express();
+
 app.use(helmet());
+app.use(mongoSanitize());
+app.use(xss());
+app.use(csrf());
+app.use(morgan('combined'));
 
 const allowedOrigins = [
   'http://localhost:3000',
@@ -36,12 +46,10 @@ app.use((req, res, next) => {
     );
     res.setHeader('Access-Control-Allow-Credentials', 'true');
   }
-
   if (req.method === 'OPTIONS') {
     res.status(200).end();
     return;
   }
-
   next();
 });
 
@@ -49,33 +57,44 @@ app.use(ping_pong);
 
 app.use(
   rateLimit({
-    windowMs: 10 * 60 * 1000,
-    max: 60,
-    message: 'Too many requests, please try again later.',
+    windowMs: 5 * 60 * 1000,
+    max: 30,
+    message: 'Too many requests, slow down!',
   })
 );
+
 app.use(compression());
 app.use(express.json());
 app.use(cookieParser());
 
-app.use(contact);
 app.use(signup);
 
 app.use((req, res, next) => {
-  if (req.get('origin') == 'https://markethealers.markethealers.com'){ next();}
-  else{res.status(400).send(`Nice try, Slacker. You can’t even pluck a single hair here. Get lost.`);}
+  if (
+    req.get('origin') === 'https://markethealers.markethealers.com' ||
+    req.get('origin') === 'https://markethealers.com'
+  ) {
+    next();
+  } else {
+    res
+      .status(400)
+      .send(
+        'Oh wow, such hacking skills! But Denied. Maybe come back after a cybersecurity course? 🤡 👉 <a href="https://youtu.be/hXSFdwIOfnE?feature=shared" target="_blank">Cybersecurity Course</a>'
+      );
+  }
 });
 
+app.use(contact);
 app.use(api);
+
 app.use((req, res) => {
   res.status(404).json({ error: '143 Page not found' });
 });
 
 app.use((err, req, res, next) => {
-  console.error('Error:', err);  
+  console.error('Error:', err);
   res.status(500).json({ error: 'Internal Server Error' });
 });
-
 
 connectToDB()
   .then(() => {
