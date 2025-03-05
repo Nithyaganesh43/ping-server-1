@@ -63,7 +63,7 @@ app.use(signup);
 
 app.use((req, res, next) => {
   if (req.get('origin') == 'https://markethealers.markethealers.com'){ next();}
-  else{res.status(400).send(`Nice try, Slacker. You can’t even plug a single hair here. Get lost.`);}
+  else{res.status(400).send(`Nice try, Slacker. You can’t even pluck a single hair here. Get lost.`);}
 });
 
 app.use(api);
