@@ -80,17 +80,22 @@ app.use(cookieParser());
 
 app.use(signup);
 
-
 app.use((req, res, next) => {
-  console.log('Origin:', req.get('origin') || 'N/A');
-  console.log('Referer:', req.get('referer') || 'N/A');
-  next();
+  if (
+    req.get('origin') === 'https://markethealers.markethealers.com' ||
+    req.get('origin') === 'https://markethealers.com' ||
+    req.get('origin') === 'https://www.markethealers.com'
+  ) {
+    next();
+  } else {
+    res.status(403).send('🤡');
+  }
 });
-
 
 app.use((req, res, next) => {
   if (
     req.get('referer')?.startsWith('https://markethealers.markethealers.com') ||
+    req.get('referer')?.startsWith('https://www.markethealers.com') ||
     req.get('referer')?.startsWith('https://markethealers.com')
   ) {
     next();
