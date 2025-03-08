@@ -102,7 +102,7 @@ app.use((req, res, next) => {
   ) {
     next();
   } else {
-    res.status(403).send('🤡');
+    res.status(403).send('🤡🤡');
   }
 });
 const sanitizeInput = (req, res, next) => {
@@ -113,17 +113,14 @@ const sanitizeInput = (req, res, next) => {
       break;
     }
   }
-  if (found) return res.status(403).send('🤡');
+  if (found) return res.status(403).send('🤡🤡🤡');
   next();
 };
 
 app.use(sanitizeInput);
 
 
-app.use(contact);
-
-
-
+app.use(contact); 
 app.use(api);
 
 app.use((req, res) => {

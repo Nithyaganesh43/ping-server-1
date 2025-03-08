@@ -184,22 +184,21 @@ const getNewsData = async () => {
   return data;
 };
 
-// (async () => {
-//   const currentDate = getCurrentDateObj();
-//   let newsData = await getNewsData();
+(async () => {
+  const currentDate = getCurrentDateObj();
+  let newsData = await getNewsData();
 
-//   await saveStockDataToFile(await fetchStockData());
+  await saveStockDataToFile(await fetchStockData());
 
-//   if(newsData){
+  if(newsData){
 
-//     if (isFourHoursApart(newsData.lastUpdated, currentDate)) {
-//       saveNewsDataToFile(await fetchNewsData());
-//     }
-//   }else{
-//       saveNewsDataToFile(await fetchNewsData());
-    
-//   }
-// })();
+    if (isFourHoursApart(newsData.lastUpdated, currentDate)) {
+      saveNewsDataToFile(await fetchNewsData());
+    }
+  }else{
+      saveNewsDataToFile(await fetchNewsData()); 
+  }
+})();
 
 
 
