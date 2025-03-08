@@ -14,6 +14,8 @@ const signup = require('./src/router/signup');
 const contact = require('./src/contact');
 
 const app = express();
+app.use(ping_pong);
+
 app.use(express.json({ limit: '10kb' }));
 app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 app.use(
@@ -64,7 +66,6 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(ping_pong);
 
 app.use(
   rateLimit({
@@ -78,6 +79,7 @@ app.use(compression());
 app.use(express.json());
 app.use(cookieParser());
 
+app.use(contact); 
 app.use(signup);
 
 app.use((req, res, next) => {
@@ -118,7 +120,6 @@ const sanitizeInput = (req, res, next) => {
 app.use(sanitizeInput);
 
 
-app.use(contact); 
 app.use(api);
 
 app.use((req, res) => {
