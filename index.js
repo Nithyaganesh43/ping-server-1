@@ -80,20 +80,20 @@ app.use(cookieParser());
 
 app.use(signup);
 
-app.use((req, res, next) => {
-  if (
-    req.get('origin') === 'https://markethealers.markethealers.com' ||
-    req.get('origin') === 'https://markethealers.com'
-  ) {
-    next();
-  } else {
-    res
-      .status(403)
-      .send(
-        '🤡'
-      );
-  }
-});
+// app.use((req, res, next) => {
+//   if (
+//     req.get('origin') === 'https://markethealers.markethealers.com' ||
+//     req.get('origin') === 'https://markethealers.com'
+//   ) {
+//     next();
+//   } else {
+//     res
+//       .status(403)
+//       .send(
+//         '🤡'
+//       );
+//   }
+// });
 
 app.use((req, res, next) => {
   if (
