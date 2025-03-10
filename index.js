@@ -79,7 +79,6 @@ app.use(compression());
 app.use(express.json());
 app.use(cookieParser());
 
-app.use(contact); 
 app.use(signup);
 
 app.use((req, res, next) => {
@@ -119,6 +118,7 @@ const sanitizeInput = (req, res, next) => {
 
 app.use(sanitizeInput);
 
+app.use(contact); 
 
 app.use(api);
 
